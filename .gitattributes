@@ -4,7 +4,7 @@
 * text=auto
 
 * linguist-vendored
-*.js linguist-vendored=true
+*.cs linguist-vendored=false
 
 ###############################################################################
 # Set default behavior for command prompt diff.
