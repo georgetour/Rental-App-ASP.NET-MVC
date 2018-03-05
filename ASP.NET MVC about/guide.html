@@ -1,0 +1,149 @@
+<html>
+<head><meta charset="UTF-8">
+
+<style>body{font-size:1.5em; padding:20px;}section{border:1px solid black; padding:10px;margin-bottom :20px;}img{width:100%;}</style>
+</head>
+<body>
+<section>
+
+<h1>ASP.NET MVC</h1>
+<p>MVC is an architectural pattern that stands for Model View Controller. Designed in 1970s and was widely adopted in web. It is used 
+by many frameworks like Laravel, RubyOnRails,ASP.NET MVC etc.
+ </p>
+ 
+ <ul>
+ <li><h2>Model</h2>Application data and behaviour in terms of its problem domain independent of the UI. In model we have our classes.
+ These classes have properties and methods that purely represent the application state and rules that have nothing to do with the UI.(Plain CLR objects or POCOs)</li>
+ <li><h2>View</h2>The HTML that we display to the user</li>
+ <li><h2>Controller</h2> Responsible for handling the HTTP request(for example if our app is hosted in vidly.com and we want to view vidly.com/movies a controller will
+ be selected to handle this request)<br>***View <- Controller -> Model*** So the controller is responsible for connecting the Model with the View.</li>
+ <li><h2>Router</h2>This is not mentioned in MVC letters but it's always there. Selecting the right controller is the responsibility of the router. The router 
+ based on some rules knows what controller must be used according to the request. In ASP.NET MVC methods of a controller are called actions</li>
+ </ul>
+<p>With this architecture every component is responsible for doing something and seperating it for clearer code and maintanability.</p>
+</section>
+
+<section>
+<h1>ASP.NET MVC structure</h1>
+
+ <ul>
+ <li><h2>App_Data</h2>Database files will be stored here</li>
+ <li><h2>App_Start</h2>Includes some classes for when the application is started
+	<ol>
+		<li><h3>Routeconfig.cs</h3><p>This is the configuration or our routing rules.</p>
+		<img src="route_config.jpg">
+		<p>So if our url matches this patterns we have: First part is the name of the controller,second part is the name of the action, third part is an ID
+		we can pass to that action. With this rule if we send a request to movies/popular in runtime we have a MoviesController and a Popular() method.
+		Another example is with /movies/edit/1 we get MoviesController and its method Edit(int id) with id 1.
+		</p>
+		<p>Also we can see we have some defaults values in our picture. So if the request doesn't match the url pattern we will get the defaults.
+		Similarly if we have the controller but not the action it will be hanlded by the Index action. If we go to /movies since we don't have any actions
+		it will be handled by MoviesController.Index().
+		</p>
+		<p>Id is an optional parameter. Because not every action needs an id.</p>
+	</ol>
+ </li>
+ <li><h2>Content</h2>
+ <p>Here we put our css files, images and every other client assets.</p>
+ 
+ <li><h2>Controllers</h2>
+ <p>The folder with our controllers which in our first created applcation we see 3 default controllers.</p>
+ </li>
+ 
+<li><h2>fonts</h2>
+ <p>Fonts(we should move them to Content).</p>
+ </li>
+ 
+ <li><h2>Models</h2>
+ <p>All our domain classes are here.</p>
+ </li>
+ 
+<li><h2>Scripts</h2>
+ <p>Javascript files.</p>
+</li>
+ 
+<li><h2>Views</h2>
+ <p>We have our views which is the V in MVC. In there we have folders named after controllers(without the ending controllers) in our application.
+ By convention when we use a view ASP.NET will look for the same name as the controller.
+ <img src="view.jpg">
+ <p>We also have a folder called Shared which includes the views that can be viewed by different controllers.</p>
+</li>
+
+<li><h2>favicon.ico</h2>
+ <p>The icon diplayed for our app in browser.</p>
+</li>
+
+<li><h2>Global.asax</h2>
+ <p>Traditional file that has been in ASP.NET which is a class that provides hooks for various events in the applications lifecycle.
+ When the application is started Global.asax will start. We will have some things registered like Routes.
+ </p>
+</li>
+
+ <li><h2>packages.config</h2>
+ <p>It's used by Nuget package manager(like npm bower etc). Instead of going to every site downloading and installing a package we have them all in one place 
+ in Visual Studio.
+ </p>
+</li>
+ 
+  <li><h2>Startup.cs</h2>
+ <p>This the new approach microsft takes for ASP.NET core which will replace Global.asax when the application starts.
+ </p>
+</li>
+ 
+   <li><h2>Web.config</h2>
+ <p>This is an .xml file which has our configuration for our application. Mostly we use connectionStrings(database connection info) and appSettings(our configuration
+ settings for our app)
+ </p>
+</li>
+ 
+ </ul>
+
+
+</section>
+
+<section>
+<h1>MVC in Action</h1>
+<p>First we create a class in Model with the properties we want.</p>
+<p>Let's say we want to have a page that we randomly pick a movie and render its details. If the page will be /movies/random we need to create a controller
+called MoviesController with an action called random.
+</p>
+<p>To create the controller in solution explorer right click in controller and then add controller. There we have some templates that will auto generate 
+some code for us. Then we create an empty one. By default we have an Index action which returns the View. We have to create what methods/actions we will have.
+ </p>
+ <p>We have to say to this newlly created controller that we will use the models.
+<img src="using_models_in_controller.jpg">
+ </p>
+ <p>As we see it returns the View which we should create in our folder Movies that will be called Random.
+ <img src="add_view.jpg">
+ </p>
+ <p>There we can use a template and choose as a <strong>partial view</strong> which is like a widget which can be used on different views.
+ <img src="partial_view.jpg">
+ </p>
+<p>Also we have to select the layout since we want all our pages look similar in our app. By default our mvc project has a layout to choose.
+<img src="layout_template.jpg">
+
+</p>
+
+<h2>.cshtml(the view we created)</h2>
+<ol>
+<li><h3>ViewBag.Title </h3><p>This is basically the title for the page shown in the browser</p></li>
+<li><h3>Layout</h3><p>The layout used for this view.</p></li>
+
+</ol>
+<p>Back at our MoviesController we pass the parameter we want to show in our View method.
+<img src="return_view.jpg">
+</p>
+
+<p>When we want to write C#  and have it shown in our View we start with @. Then we write Model. Every View has 
+this property which give us access to the Model we passed to it and the controller. If we type . at the Model we will see
+that the type of this model is dynamic.
+<img src="dynamic.jpg">
+</p>
+<p>On top of the file we need to use a directive to specify the type of the Model for this View.
+<img src="fully_qualified_name.jpg">
+</p>
+<p>After that we can see that we can access the Name property for Model and we can put it in our html.</p>
+</section>
+
+</body>
+</html>
