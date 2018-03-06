@@ -37,10 +37,15 @@ by many frameworks like Laravel, RubyOnRails,ASP.NET MVC etc.
 		Another example is with /movies/edit/1 we get MoviesController and its method Edit(int id) with id 1.
 		</p>
 		<p>Also we can see we have some defaults values in our picture. So if the request doesn't match the url pattern we will get the defaults.
-		Similarly if we have the controller but not the action it will be hanlded by the Index action. If we go to /movies since we don't have any actions
+		Similarly if we have the controller but not the action it will be handled by the Index action. If we go to /movies since we don't have any actions
 		it will be handled by MoviesController.Index().
 		</p>
 		<p>Id is an optional parameter. Because not every action needs an id.</p>
+		</li>
+		
+		<li><h3>Bundleconfig.cs</h3>
+		<p>Here we define various bundles for client side assets like scripts css etc.</p>
+		</li>
 	</ol>
  </li>
  <li><h2>Content</h2>
@@ -105,7 +110,7 @@ by many frameworks like Laravel, RubyOnRails,ASP.NET MVC etc.
 <h1>MVC in Action</h1>
 <p>First we create a class in Model with the properties we want.</p>
 <p>Let's say we want to have a page that we randomly pick a movie and render its details. If the page will be /movies/random we need to create a controller
-called MoviesController with an action called random.
+called MoviesController with an action called random. So an action is a method responsible for handling a request.
 </p>
 <p>To create the controller in solution explorer right click in controller and then add controller. There we have some templates that will auto generate 
 some code for us. Then we create an empty one. By default we have an Index action which returns the View. We have to create what methods/actions we will have.
@@ -143,6 +148,192 @@ that the type of this model is dynamic.
 <img src="fully_qualified_name.jpg">
 </p>
 <p>After that we can see that we can access the Name property for Model and we can put it in our html.</p>
+</section>
+
+<section>
+<h1>ASP.NET MVC Fundamentals</h1>
+<ul>
+
+<li>
+<h2>Action Results</h2>
+<p>In our controllers before our methods name we have ActionResult type.</p>
+<pre>        public ActionResult Random()
+        {
+            var movie = new Movie() {Name ="Shrek" };
+            return View(movie);
+        }</pre>
+<p>ActionResult is the base class of all action resolves in ASP.NET MVC. Depending on what an action does it would return an instance of one the class that derives from.</p>		
+</li>
+<ol>
+<li>
+<h3>return View() in ActionResult</h3>
+<p>This method allows us to quickly create a view result and derives from Controller class. Another way is :</p>
+<pre>return new ViewResult();</pre>
+
+</li>
+
+<li>
+<h3>ViewResult</h3>
+<p>We can set the type to ViewResult instead of ActionResult. This is good for unit testing. Sometimes in an action we may have different execution paths and return different action results.</p>
+</li>
+
+<li>
+<h3>PartialViewResult</h3>
+<p>Return a PartialView().</p>
+</li>
+
+<li>
+<h3>ContentResult</h3>
+<p>Return simple text Content().</p>
+<pre>   
+        public ActionResult Random()
+        {
+            
+            return Content("Hello World");
+        }</pre>
+</li>
+
+<li>
+<h3>RedirectResult</h3>
+<p>Redirect user to url Redirect().</p>
+</li>
+
+<li>
+<h3>RedirectToRouteResult</h3>
+<p>RedirectToAction() instead of url. First the name of the action and then the name of the controller.</p>
+<pre>        public ActionResult Random()
+        {
+            return RedirectToAction("Index","Home");
+        }</pre>
+		<p>If we want to have new query strings we will have to pass a third argument.
+		<img src="query_strings.jpg"></p>
+</li>
+
+<li>
+<h3>JsonResult</h3>
+<p>Return a serialized object file Json().</p>
+</li>
+
+<li>
+<h3>FileResult</h3>
+<p>Return a  file File().</p>
+</li>
+
+<li>
+<h3>HttpNotFoundResult</h3>
+<p>Return a not found error HttpNotFound().</p>
+<pre>        public ActionResult Random()
+        {
+            return HttpNotFound();
+        }</pre>
+</li>
+
+<li>
+<h3>EmptyResult</h3>
+<p>Return something empty like void.</p>
+<pre>        public ActionResult Random()
+        {
+            return new EmptyResult();
+        }</pre>
+</li>
+</ol>
+
+<li>
+<h2>Action parameters</h2>
+<p>The input for our actions. The parameter resources :</p>
+
+<ol>
+<li><p>In the URL : /movies/edit/1 (if the paramater is not named id but something else since in our default we must have it as id we will get an error)</p>
+<img src="parameter_resource_url.jpg">
+</li>
+<li><p>In the query string : /movies/edit?id=2</p>
+<img src="parameter_resource_query_string.jpg">
+</li>
+<li>In the form data : id=1</li>
+
+<li><p>Optional parameter</p>
+<pre>        public ActionResult Index(int? pageIndex,string sortBy)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            if (String.IsNullOrWhiteSpace(sortBy))
+            {
+                sortBy = "Name";
+            }
+            return Content(String.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
+
+        }</pre>
+</li>
+
+</ol>
+
+<p>If we don't have the parameter we will get an error.
+<img src="no_parameter.jpg">
+</p>
+</li>
+
+
+<li>
+<h2>Convention-based Routing(custom Routing)</h2>
+<p>We might need in our application more parameters than id like : /movies/released/2015/04. You have 
+to define the Routes from the more specific to the most generic otherwise the more generic will be applied to the url.
+The most common overload method is the one with three parameters(name,URL, defaults) and the name must be unique.
+</p>
+<pre>            routes.MapRoute(
+                "MoviesByReleaseDate",
+                "movies/released/{year/{month}}",
+                new {controller = "Movies",action="ByReleaseDate"});</pre>
+<p>Next we create the action(if we type mvcaction4 and tab we can create it fast). If the url doesn't matches the RouteConfig patterns we will get an error.
+<img src="custom_routing.jpg">
+</p>
+<p>Regular Expression(if the url doesn't matches the expression we will get an error)</p>
+<pre>            routes.MapRoute(
+                "MoviesByReleaseDate",
+                "movies/released/{year}/{month}",
+                new{controller = "Movies",action="ByReleaseDate"},
+                new {year = @"\d{4}", month = @"\d{2}"}
+                );</pre>
+<p>If we want to limit the route parameters: </p>
+<pre>            routes.MapRoute(
+                "MoviesByReleaseDate",
+                "movies/released/{year}/{month}",
+                new{controller = "Movies",action="ByReleaseDate"},
+                new {year = @"2015||2016}", month = @"\d{2}"}
+                );</pre>
+</li>
+
+<li><h2>Attribute Routing</h2>
+<p>This is a cleaner way of creating custom routes so we can avoid making RouteConfig a mess and avoiding errors if we rename the action.</p>
+<p>First we enable it:</p>
+<pre>routes.MapMvcAttributeRoutes();</pre>
+<p>And the way of not polluting our RouteConfig : </p>
+<pre>        [Route("movies/released/{year}/{month:regex(\\d{2})}")]
+        public ActionResult ByReleaseDate(int year,byte month)
+        {
+            return Content(year +"/" +month);
+        }</pre>
+		<h3>Constraints</h3>
+		<ol>
+		<li>range</li>
+		<li>min</li>
+		<li>max</li>
+		<li>minlength</li>
+		<li>maxlength</li>
+		<li>int</li>
+		<li>float</li>
+		<li>guid</li>
+		
+		</ol>
+</li>
+
+</ul>
+
+
+
+
 </section>
 
 </body>
