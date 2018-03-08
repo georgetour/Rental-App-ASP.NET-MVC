@@ -329,10 +329,196 @@ The most common overload method is the one with three parameters(name,URL, defau
 		</ol>
 </li>
 
+<li><h2>Passing Data to Views</h2>
+<p>We have two extra ways to return a view instead of only passing the parameter to View method.</p>
+<h3>ViewData</h3>
+<p>At our controller : </p>
+<pre>        public ActionResult Random()
+        {
+            var movie = new Movie() { Name = "Shrek" };
+
+            ViewData["Movie"] = movie;
+
+            return View();
+        }</pre>
+		
+<p>And at our Model we need to cast the ViewData with the type(this approach is ugly and shouldn't be used).</p>
+<pre>@using Vidly.Models
+@model Vidly.Models.Movie
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@( ((Movie)ViewData["Movie"]).Name)&lt;/h2&gt;
+</pre>
+</li>
+
+<li>
+<p>Microsoft tried to fix it with ViewBag that instead of magic string it has a magic property. </p>
+<pre>        public ActionResult Random()
+        {
+            var movie = new Movie() { Name = "Shrek" };
+
+            ViewBag.Movie = movie;
+
+            return View();
+        }</pre>
+<p>And at our View(if we decide to change it we should remember to change it at View also): </p>		
+<pre>@using Vidly.Models
+@model Vidly.Models.Movie
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@ViewBag.Movie&lt;/h2></pre>
+<h3>We should not use ViewData or ViewBag.</h3>
+</li>
+
+
+<li><h2>View Model</h2>
+<p>A view model is a model specifically built for a view. It includes any data and rules specific to that view. For example if we
+we didn't have the relation tou our model but we needed to show them in a view. </p>
+<p>First we create a folder that will have our View Models. Then a class that will have the objects we want to relate.</p>
+<img src="view_models.jpg">
+<p>Then at our controller a viewModel :</p>
+<pre>        public ActionResult Random()
+        {
+            var movie = new Movie() { Name = "Shrek" };
+            var customers = new List&lt;Customer>
+            {
+                new Customer() {Name = "Customer1" },
+                new Customer() {Name = "Customer2" }
+            };
+
+            var viewModel = new RandomMovieViewModel
+            {
+                Movie = movie,
+                Customers = customers
+            };
+
+            return View(viewModel);
+        }</pre>
+<p>And at our Model : </p>
+<pre>@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2></pre>
+
+</li>
+
+<li><h2>Razor Syntax - Razor Views</h2>
+<p>We have seen that we simply add an @ symbol to write C# code in our View. We can alos write a foreach loop 
+to show all data we want in our List. In the foreach block we can continue to write c# or we can write HTML.
+</p>
+<pre>@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2>
+
+&lt;ul>
+    @foreach (var customer in Model.Customers)
+    {
+        &lt;li>@customer.Name&lt;/li>
+    }
+&lt;/ul></pre>
+
+<p>We can also write anything we want like ifs etc.</p>
+
+<pre>@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2>
+
+@if (Model.Customers.Count == 0)
+{
+    &lt;p>No one has rented this movei before.&lt;/p>
+}</pre>
+
+<p>Using if and else : </p>
+<pre>@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2>
+
+@if (Model.Customers.Count == 0)
+{
+    &lt;p>No one has rented this movei before.&lt;/p>
+}
+else
+{
+    &lt;ul>
+        @foreach (var customer in Model.Customers)
+        {
+            &lt;li>@customer.Name&lt/li>
+        }
+    &lt;/ul>
+}</pre>
+
+<p>Rendering something dynamically : </p>
+<pre>@{ 
+    var className = Model.Customers.Count > 5 ? "popular" : null;
+}
+
+&lt;h2 class="@className">@Model.Movie.Name&lt/h2></pre>
+
+<p>And to comment with razor syntax</p>
+<pre>@*
+    This is a comment
+*@</pre>
+</li>
+
+<li>
+<h2>Partial Views</h2>
+<p>It's something that you can use it in different smaller areas like widgets etc or the navbar can be be in a partial view.
+To create a partial view right click in views then add View. By convention we use an underscore for a partial view.
+</p>
+<img src="partial_views.jpg">
+<p>Then to render it where we want we call the Html property of our Views.</p>
+<pre>&lt;body>
+    @Html.Partial("_NavBar")</pre>
+</li>
+
+<li><h3>ActionLink()</h3>
+<p>ActionLink is used to define links for example in our navbar and has 9 overloads. In the below code we have
+name of link, actionName, controllerName . </p>
+<pre>                &lt;li>@Html.ActionLink("Home", "Index", "Home")&lt;/li></pre>
+
+
+
+</li>
+
+<li><h3>Url.Action()</h3>
+<p>It provides only the Url potion and not the whole href like ActionLink(). </p>
+<pre>&ltul>
+    @foreach (var customer in Model.Customers)
+    {
+        &ltli>&lta href="@Url.Action("Details")/@customer.Id">@customer.Name&lt/a>&lt/li>
+    }
+&lt/ul></pre>
+
+
+
+</li>
+
 </ul>
-
-
-
 
 </section>
 
