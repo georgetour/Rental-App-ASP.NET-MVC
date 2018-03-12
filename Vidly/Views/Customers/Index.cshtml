@@ -7,10 +7,16 @@
 
 <h2>Customers</h2>
 
-<ul>
-    @foreach (var customer in Model.Customers)
-    {
-        <li><a href="@Url.Action("Details")/@customer.Id">@customer.Name</a></li>
-    }
-</ul>
 
+    @if (Model.Customers.Count <=0)
+    {
+        <p>Customer list is empty </p>
+    } else {
+        <ul>
+           @foreach (var customer in Model.Customers)
+            {
+                <li><a href="@Url.Action("Details")/@customer.Id">@customer.Name</a></li>
+            }
+       
+        </ul>
+    }

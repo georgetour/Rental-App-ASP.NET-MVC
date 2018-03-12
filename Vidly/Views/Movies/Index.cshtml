@@ -1,4 +1,4 @@
-﻿@model Vidly.Models.Movie
+﻿@model List<Vidly.Models.Movie>
 
 @{
     ViewBag.Title = "Index";
@@ -7,8 +7,8 @@
 
 <h2>Movies</h2>
 
-@foreach (var movie in Model.Name)
+@foreach (var movie in Model)
 {
-    
+    <li>@movie.Name</li>
 }
 

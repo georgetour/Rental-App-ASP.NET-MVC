@@ -21,9 +21,9 @@ namespace Vidly.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            
             var viewModel = new RandomMovieViewModel
             {
+                
                 Customers = customers
             };
 
