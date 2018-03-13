@@ -1,7 +1,26 @@
 <html>
 <head><meta charset="UTF-8">
 
-<style>body{font-size:1.5em; padding:20px;}section{border:1px solid black; padding:10px;margin-bottom :20px;}img{width:100%;}</style>
+<style>body{
+		font-size:1.5em; 
+		padding:20px;
+	}
+	
+	section{
+		border:1px solid black; 
+		padding:10px;margin-bottom :20px;
+	}
+	
+	img{
+		width:50%;
+	}
+	
+	img:hover{
+		width:100%;
+	}
+
+
+</style>
 </head>
 <body>
 <section>
@@ -548,6 +567,193 @@ name of link, actionName, controllerName . </p>
 <p>Forth we must generate our database by running the command update-database. We will have an mdf file created in our App-data :</p>
 <img src="generating_database.jpg">
 </section>
+
+<section>
+<h1>Seeding the database</h1>
+<p>To seed the database you run an empty migration which will create an Up and Down method. 
+Then in Up method you will use the SQL method to query the database and give data.
+</p>
+<p>After writing the query you type update-database in our package manager console. </p>
+
+</section>
+
+<section>
+<h1>Overriding Conventions</h1>
+<h2>Data Annotations</h2>
+<p>If you want to change some column's properties you must use System.ComponentModel.DataAnnotations.
+</p>
+<p>Then you put in squared brackets the change you want :</p>
+<pre>using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace Vidly.Models
+{
+    public class Customer
+    {
+        public int Id { get; set; }
+        [Required]
+        public string Name { get; set; }
+        public bool IsSubcribed { get; set; }
+        public MembershipType MembershipType { get; set; }
+        public byte MembershipTypeId { get; set; }
+
+    }
+}</pre>
+<p>Also we can use Fluent API as in the html file in here :<br><a href="https://github.com/georgetour/Entity-Framework/blob/master/Chapter%205%20Overriding%20Conventions/README.html">https://github.com/georgetour/Entity-Framework/blob/master/Chapter%205%20Overriding%20Conventions/README.html</a> </p>
+</section>
+
+<section>
+<h1>Querying Objects</h1>
+<p>To query the database with Entity framework first we create an ApplicationDbContext and initialize it in
+the constructor since it's a disposable object we must dispose it :</p>
+
+<h2>The Controller :</h2>
+<pre>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Vidly.Models;
+using Vidly.ViewModels;
+
+namespace Vidly.Controllers
+{
+    public class CustomersController : Controller
+    {
+
+        private ApplicationDbContext _context;
+
+
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        
+        // GET: Customers
+        public ActionResult Index()
+        {
+            var customers = _context.Customers.ToList();
+           
+            return View(customers);
+        }
+
+
+        //Details for one customer 
+        public ActionResult Details(int id)
+        {
+
+            var customerDetails = _context.Customers.SingleOrDefault(c => c.Id== id);
+
+            if (customerDetails == null)
+               return HttpNotFound();
+
+            return View(customerDetails);
+        }
+
+    }
+}
+
+
+</pre>
+
+<h2>The View</h2>
+<pre>@model IEnumerable&lt;Vidly.Models.Customer>
+
+@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>Customers</h2>
+
+
+    @if (!Model.Any())
+    {
+        &lt;p>Customer list is empty &gt;/p>
+    } else {
+        &lt;ul>
+           @foreach (var customer in Model)
+            {
+                &lt;li>&lt;a href="@Url.Action("Details")/@customer.Id">@customer.Name&lt;/a>&lt;/li>
+            }
+       
+        &lt;/ul>
+    }
+</pre>
+
+</section>
+
+<section>
+<h1>Eager Loading</h1>
+<p>If we try to load anything related objects we will get an error since Entity Framework loads only the main object.</p>
+<p>So we have to load them all together and then show them in View by using Include method and System.Data.Entity :</p>
+
+<pre>using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Vidly.Models;
+using Vidly.ViewModels;
+
+namespace Vidly.Controllers
+{
+    public class CustomersController : Controller
+    {
+
+        private ApplicationDbContext _context;
+
+
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        
+        // GET: Customers
+        public ActionResult Index()
+        {
+            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
+           
+            return View(customers);
+        }
+
+
+        //Details for one customer 
+        public ActionResult Details(int id)
+        {
+
+            var customerDetails = _context.Customers.SingleOrDefault(c => c.Id== id);
+
+            if (customerDetails == null)
+               return HttpNotFound();
+
+            return View(customerDetails);
+        }
+
+    }
+}
+
+
+</pre>
+
+</section>
+
 
 </body>
 </html>

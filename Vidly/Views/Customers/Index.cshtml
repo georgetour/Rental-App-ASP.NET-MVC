@@ -1,4 +1,4 @@
-﻿@model Vidly.ViewModels.RandomMovieViewModel
+﻿@model IEnumerable<Vidly.Models.Customer>
 
 @{
     ViewBag.Title = "Customers";
@@ -8,15 +8,27 @@
 <h2>Customers</h2>
 
 
-    @if (Model.Customers.Count <=0)
+    @if (!Model.Any())
     {
         <p>Customer list is empty </p>
     } else {
-        <ul>
-           @foreach (var customer in Model.Customers)
-            {
-                <li><a href="@Url.Action("Details")/@customer.Id">@customer.Name</a></li>
-            }
+        <table class="table table-bordered table-hover" >
+            <tr>
+                <th>Customer</th>
+                <th>Discount Rate</th>
+            </tr>
+            <tbody>
+                @foreach (var customer in Model)
+                {
+                    <tr>
+                        <td><a href="@Url.Action("Details")/@customer.Id">@customer.Name</a></td>
+                        <td>@customer.MembershipType.DiscountRate%</td>
+                    </tr>
+                }
+
+            </tbody>
+
+          
        
-        </ul>
+        </table>
     }
