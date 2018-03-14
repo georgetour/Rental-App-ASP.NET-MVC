@@ -548,7 +548,7 @@ name of link, actionName, controllerName . </p>
 <h1>Starting with database</h1>
 <p>First in our package manager console we enable migrations.</p>
 <p>Second we create our first migration with add-migration and name of migration.</p>
-<p>Third we must create our tables in ApplicationContext as Dbset.</p>
+<p>Third we must create our tables in ApplicationContext as Dbset. Those changes are done in <strong>IdentityModel</strong>.</p>
 <pre>    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Customer> Customers { get; set; }
