@@ -15,14 +15,14 @@
         <table class="table table-bordered table-hover" >
             <tr>
                 <th>Customer</th>
-                <th>Discount Rate</th>
+                <th>Membership</th>
             </tr>
             <tbody>
                 @foreach (var customer in Model)
                 {
                     <tr>
                         <td><a href="@Url.Action("Details")/@customer.Id">@customer.Name</a></td>
-                        <td>@customer.MembershipType.DiscountRate%</td>
+                        <td>@customer.MembershipType.Membership</td>
                     </tr>
                 }
 
