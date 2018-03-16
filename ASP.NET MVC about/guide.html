@@ -754,6 +754,175 @@ namespace Vidly.Controllers
 
 </section>
 
+<section>
+<h1>Forms</h1>
+<p>To have a form first we need an Action that we will show the form in View(if you type mvcaction4 tab tab you will see a new Action easily created in Visual Studio).</p>
+<p>After we have created the action in our View for the form :</p>
+
+<ol>
+<li>
+<h3>With Html.BeginForm we pass the action this form will target when is submitted and the Controller. We have to write using at the begin so the form will be closed :</h3>
+<pre>@using (Html.BeginForm("Create", "Customers"))
+{
+
+}</pre>
+</li>
+<li>
+<h3>Inside the form we can use raw html or the methods we have in @Html<strong>(by using the methods we get automatically validation according to Model)</strong>. According to what we have in our Model the form will have the
+the fields accordingly :
+</h3>
+<pre>    public class Customer
+    {
+        public int Id { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
+        public bool IsSubcribed { get; set; }
+        public MembershipType MembershipType { get; set; }
+        public byte MembershipTypeId { get; set; }
+        public DateTime? Birthdate { get; set; }
+
+    }
+}</pre>
+<img src="form_fields_according_to_model.jpg">
+
+<pre>@model Vidly.Models.Customer
+
+@{
+    ViewBag.Title = "NewCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>New Customer&lt;/h2>
+
+@using (Html.BeginForm("Create", "Customers"))
+{
+    &lt;div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name)
+    &lt;/div>
+}</pre>
+
+</li>
+
+<li><h3>Add extras to form field (classes etc) :</h3>
+<p>To do this we hust add the new keyword and type what we want :</p>
+<pre>@using (Html.BeginForm("Create", "Customers"))
+{
+    &lt;div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class ="form-control" })
+    &lt;/div>
+
+
+}
+</pre>
+
+<p>Though if we have a check box we have to layout differently :</p>
+
+<pre>    &lt;div class="checkbox">
+        &lt;label>
+            @Html.CheckBoxFor(m => m.IsSubcribed, new { @type = "checkbox" })Subscribed to Newsletter
+        &lt;/label>
+    &lt;/div></pre>
+
+</li>
+
+<li>
+<h3>Changing display name of a label for a field :</h3>
+<p>With the above code we get the name for the label dynamically according to its Model. If we want to change
+it we have two options :
+</p>
+<pre>namespace Vidly.Models
+{
+    public class Customer
+    {
+        public int Id { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
+        public bool IsSubcribed { get; set; }
+        public MembershipType MembershipType { get; set; }
+        public byte MembershipTypeId { get; set; }
+
+        [Display(Name = "Date of Birth")]
+        public DateTime? Birthdate { get; set; }
+
+    }
+}</pre>
+
+<p>Second option pure html:</p>
+<pre>    &lt;div class="form-group">
+        &lt;label for="Birthdate">Date of Birthday&lt;/label>
+        @Html.TextBoxFor(m => m.Birthdate, new { @class = "form-control" })
+    &lt;/div>
+</pre>
+
+</li>
+
+<li>
+<h3>DropDown lists</h3>
+<p>First we need bring in our action what we want to show in our dropdown list:</p>
+<pre>        public ActionResult NewCustomer()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            var viewModel = new NewCustomerViewModel
+            {
+                MembershipTypes = membershipTypes
+            };
+
+            return View(viewModel);
+        }</pre>
+		
+<p>At our View :</p>
+<pre><code>    &lt;div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, 
+                                new SelectList(Model.MembershipTypes,"Id","Membership"),
+                                "Select membership type", 
+                                new { @class = "form-control" })
+    &lt;/div></code></pre>	
+<p>First we define for what this dropdown will be in our case for MembershipTypeId. Then we write new SelectList with the arguments
+what we will bing from the model the list of items, then the name of the property that holds the value of each item in this case Id,
+next argument the property for the text of each item which is Membership. After a string for the title of the list "Select membership type" and finally if we want something like classes etc.
+</p>	
+</li>
+
+<li>
+<h3>Model Binding</h3>
+<p>When our form is ready we finally need a button and the action we had in Html.BeginForm with the HttpPost attribute above.</p>
+
+<pre>        [HttpPost]
+        public ActionResult Create(NewCustomerViewModel viewModel)
+        {
+            return View();
+        }</pre>
+		
+<p>MVC is smart enough to bind the action with what we passed in ass parameter.</p>		
+</li>
+
+<li><h3>Saving Data</h3>
+<p>First we use the Add method that temporarily saves our data and for the changes to be applied to database we need
+to SaveChanges().
+</p>
+<pre>        [HttpPost]
+        public ActionResult Create(Customer customer)
+        {
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index","Customers");
+        }</pre>
+
+</li>
+
+<p>Finally we redirect them or create a View which will have the same name as the action like thank you it was submitted etc.</p>
+
+</ul>
+
+
+</section>
+
 
 </body>
 </html>
