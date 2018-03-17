@@ -874,6 +874,16 @@ it we have two options :
             return View(viewModel);
         }</pre>
 		
+<p>We also need to create a ViewModel that will have the IEnumerable for the dropdown list.
+</p>
+
+<pre>    public class CustomerFormViewModel
+    {
+        //list of membership types
+        public IEnumerable<MembershipType> MembershipTypes { get; set; }
+        public Customer Customer { get; set; }
+    }</pre>
+
 <p>At our View :</p>
 <pre><code>    &lt;div class="form-group">
         @Html.LabelFor(m => m.Customer.MembershipTypeId)
@@ -917,6 +927,85 @@ to SaveChanges().
 </li>
 
 <p>Finally we redirect them or create a View which will have the same name as the action like thank you it was submitted etc.</p>
+
+<li>
+<h3>Edit Form</h3>
+<p>To edit a form first we need to have an action:</p>
+<pre>        public ActionResult Edit(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+
+            if (customer == null)
+            {
+                return HttpNotFound();
+
+            }
+            return View("CustomerForm",viewModel);
+        }</pre>
+		
+<p>We will bring a customer according to id passed. Then we have the ViewModel we have created which will get 
+the Customer and the mEmbershipTypes directly from context. If we don't have anything for that id return null else return
+the View CustomerForm and in it the viewModel.
+</p>
+</li>
+
+<li>
+<h3>Updating Data</h3>
+<p>We have two options. Either to use TryUpdateModel() which updates all the data. This is not suggested though for security reasons
+and if we have an option to pass arguments only that we want with strings as 3rd argument.</p>
+<h4>Wrong approach</h4>
+<pre>
+        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (customer.Id == 0)
+                _context.Customers.Add(customer);
+            else
+            {
+                var customerInDB = _context.Customers.Single(c => c.Id == customer.Id);
+
+                TryUpdateModel(customerInDB, "", new string[] { "Name", "Email" });
+            }
+            _context.SaveChanges();
+
+            return RedirectToAction("Index","Customers");
+        }
+
+
+</pre>
+<h4>Correct approach</h4>
+<pre>
+        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (customer.Id == 0)
+                _context.Customers.Add(customer);
+            else
+            {
+                var customerInDB = _context.Customers.Single(c => c.Id == customer.Id);
+
+                customerInDB.Name = customer.Name;
+                customerInDB.Birthdate = customer.Birthdate;
+                customerInDB.MembershipTypeId = customer.MembershipTypeId;
+                customerInDB.IsSubcribed = customer.IsSubcribed;
+            }
+            _context.SaveChanges();
+
+            return RedirectToAction("Index","Customers");
+        }
+
+</pre>
+<p>Also we have to have hidden the id: in our form:</p>
+<pre>@Html.HiddenFor(m => m.Customer.Id)</pre>
+<p>Which has the id in an input but hidden.</p>
+
+</li>
 
 </ul>
 
