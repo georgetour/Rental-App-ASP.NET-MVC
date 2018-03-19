@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>New Customer</h2>
+<h2>@Model.Title</h2>
 
 @using (Html.BeginForm("Save", "Customers"))
 {
@@ -16,7 +16,7 @@
 
     <div class="form-group">
         <label for="Birthdate">Date of Birthday</label>
-        @Html.TextBoxFor(m => m.Customer.Birthdate,"{0: dd MMM yyyy}", new { @class = "form-control" })
+        @Html.TextBoxFor(m => m.Customer.Birthdate,"{0: dd-MMM-yyyy}", new { @class = "form-control" })
     </div>
 
     

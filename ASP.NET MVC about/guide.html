@@ -16,7 +16,9 @@
 	}
 	
 	img:hover{
-		width:100%;
+		margin-left:100px;
+		transform: scale(1.2);
+		
 	}
 
 
@@ -1010,6 +1012,47 @@ and if we have an option to pass arguments only that we want with strings as 3rd
 </ul>
 
 
+</section>
+
+<section>
+<h1>Checking if we have value and change html and validation error</h1>
+<p>To check if we have an id an change html title for example accordingly we will just add a new property in the ViewModel
+</p>
+<pre>    public class CustomerFormViewModel
+    {
+        //list of membership types
+        public IEnumerable<MembershipType> MembershipTypes { get; set; }
+        public Customer Customer { get; set; }
+        public string Title
+        {
+            get
+            {
+                if (Customer != null && Customer.Id !=0)
+                {
+                    return "Edit Customer";
+                }
+                else
+                {
+                    return "New Customer";
+                }
+
+            }</pre>
+			
+<p>Then we will bring in our View the title.</p>
+<pre>@Html.Model.Title</pre>
+
+<h2>Validation errors</h2>
+<p>Sometimes we will see an error and we will not get info about what it is. To solve this we must use try and catch.</p>
+
+<pre>            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbEntityValidationException e) 
+            {
+
+                Console.WriteLine(e);
+            }</pre>
 </section>
 
 
