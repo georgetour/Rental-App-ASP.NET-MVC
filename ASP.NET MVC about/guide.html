@@ -1055,6 +1055,105 @@ and if we have an option to pass arguments only that we want with strings as 3rd
             }</pre>
 </section>
 
+<section>
+<h1>Validation</h1>
+<p>ASP.NET MVC uses data annotations to validate data according to parameter we have and checks if the data we pass
+is valid else gives as an error.
+</p>
+<p>We can use ModelState.IsValid to check if the data we pass is valid according to the Model.</p>
+<p>To add validation we hve three steps:</p>
+<ol>
+<li>Data annotation in our entities
+<pre>        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }</pre>
+</li>
+
+<li>Use ModelState.IsValid
+<pre>        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CustomerFormViewModel
+                {
+                    Customer = customer,
+                    MembershipTypes = _context.MembershipTypes.ToList()
+                };
+                return View("CustomerForm",viewModel);
+            }
+            </pre>
+</li>
+
+<li>Error message to user (we add a field in our view that will show the message)
+<pre>    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Name)
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class ="form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div></pre>
+
+
+</li>
+</ol>
+
+<h2>Styling validation errors and field</h2>
+<p>We can see the classes used by ASP.NET MVC in developer tools and made the CSS we want.</p>
+<p>The membership type though it s not required since it s a byte it's implicit required.</p>
+
+<h3>Data annotations</h3>
+<ol>
+<li>[Required]</li>
+<li>[StringLength(255)]</li>
+<li>[Range(1,10)] for numbers</li>
+<li>[Compare("OtherProperry")] for comparing two properties for example passwords</li>
+<li>[Phone]</li>
+<li>[EmailAddress]</li>
+<li>[Url]</li>
+<li>[RegularExpression("...")]</li>
+
+</ol>
+
+<h2>Overriding error message</h2>
+<p>We can override error messages :</p>
+<pre>        [Required(ErrorMessage = "Must not be empty")]
+        [StringLength(255)]
+        public string Name { get; set; }</pre>
+		
+<h2>Custom Validation</h2>
+<p>Let's suppose the customer who fills the form must be over 18 years</p>
+<p>First we create class out our Model which will derive from ValidationAttribute which is defined in System.ComponentModel.DataAnnotations</p>
+<p>Then we override the IsValid method.</p>
+<pre>    public class Min18YearsIfMember :ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            return base.IsValid(value, validationContext);
+        }
+    }</pre>
+	
+<p>At our Model we add the property : </p>
+<pre>        [Min18YearsIfMember]
+        public DateTime? Birthdate { get; set; }</pre>
+		
+<p>Then at our Model in the class we created and in the IsValid method. The ObjectInstance property gives us access in the containing class and we must cast it with the object we want.</p>	
+<pre>        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            var customer = (Customer)validationContext.ObjectInstance;
+
+            if (customer.MembershipTypeId ==1)
+                return ValidationResult.Success;
+            if (customer.Birthdate == null)
+                return new ValidationResult("Birthdate is required");
+
+            var age = DateTime.Today.Year - customer.Birthdate.Value.Year;
+
+            return (age >= 18 ? ValidationResult.Success : new ValidationResult("Customer should be at least 18 years old"));
+
+        }</pre>	
+	
+<p>Finally our our View form we need to add validation message.</p>
+</section>
+
 
 </body>
 </html>
