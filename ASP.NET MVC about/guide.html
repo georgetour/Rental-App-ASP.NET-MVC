@@ -1172,7 +1172,45 @@ the object with the fields so it will get 0 value instead of empty.
         }</pre>
 <p>We can pass arguments so it display a custom error and exclude all other errors.</p>
 <pre>    @Html.ValidationSummary(true,"Please fix the following errors")</pre>
+
+<h2>Cient-Side Validation</h2>
+<p>Client-side validation is by default disabled in APS.NET MVC. To enable it go to BundleConfig.cs and see that we have it at our bundles but we don't have it in our shared View file. To have it where we want we must add it in our Customer form view for example.</p>
+
+<pre>@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+</pre>
+
+<p>ASP.NET MVC now has validation errors in client side the messages we had. No extra call to server as we can see in our developer tools and Network activity. This happens because we used data annotations before so ASP.NET MVC handles everything.
+<strong>Client-side validation only works with data annotations. The custom validation we had for age won't work in client side
+ so we will use server side for that.</strong>
+</p>
+
+<h2>Prevent Cross-Site Request Forgery</h2>
+<p>We can see in the form data in our Network in developer tools the security hole.</p>
+<img src="security_hole.jpg">
+<p>To prevent this firtt we must make sure that this request comes only from the customer form.</p>
+<ol>
+<li>First we use at our form
+<pre>    @Html.AntiForgeryToken()</pre>
+<p>We can see we have a hidden field created that's for verification which this value is also stored as a cookie in users computer
+in encrypted format. If the cookie matches the value then its a legitimate request otherwise it's considered as an attack.
+.</p>
+<img src="antiforgery-token.jpg">
+</li>
+
+<li>Second we surround our action that has the HttpPost with the validation AntiForgeryToken.
+<pre>        [HttpPost]
+        [ValidateAntiForgeryToken]</pre>
+<p>All validation security will be handled by ASP.NET MVC then.</p>		
+</li>
+</ol>
+
 </section>
+
+
+
 
 
 </body>

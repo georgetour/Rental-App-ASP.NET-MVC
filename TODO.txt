@@ -1,0 +1,7 @@
+22 Mar 2018
+
+- Add validation to our movie form
+All fields are required ok 
+For stock we can't put 0 since the number must be between 1-20(Range data annotation) ok
+- Also we need client side validation ok
+- Protect the form using anti forgery token ok
