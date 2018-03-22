@@ -1152,6 +1152,26 @@ is valid else gives as an error.
         }</pre>	
 	
 <p>Finally our our View form we need to add validation message.</p>
+
+<h2>Validation summary</h2>
+<p>ASP.NET MVC gives us the ability to have the total summary of errors in our form.</p>
+<pre>@Html.ValidationSummary()</pre>
+<p>Be careful for extra messages that we will get like Ids etc since they must not be empty. We fix this by instanciating
+the object with the fields so it will get 0 value instead of empty.
+</p>
+<pre>        public ActionResult NewCustomer()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = new Customer(),
+                MembershipTypes = membershipTypes
+            };
+
+            return View("CustomerForm",viewModel);
+        }</pre>
+<p>We can pass arguments so it display a custom error and exclude all other errors.</p>
+<pre>    @Html.ValidationSummary(true,"Please fix the following errors")</pre>
 </section>
 
 

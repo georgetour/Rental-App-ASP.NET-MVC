@@ -10,7 +10,7 @@ namespace Vidly.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Must not be empty")]
+        [Required(ErrorMessage = "Name field must not be empty")]
         [StringLength(255)]
         public string Name { get; set; }
 
