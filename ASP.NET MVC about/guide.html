@@ -1207,6 +1207,112 @@ in encrypted format. If the cookie matches the value then its a legitimate reque
 </li>
 </ol>
 
+ <h2>Fixing showing empty values in form</h2>
+ <p>If we have a form and we have fields pre filled beacause we are creating an ew object</p>
+ <pre>        public ActionResult NewMovie()
+        {
+            var genres = _context.Genres.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = new Movie(),
+                Genres = genres
+            };
+
+            return View("MovieForm",viewModel);
+        }</pre>
+<img src="filled-fields.jpg">
+<p>To fix this we get all properties from our Model and place it an our ViewModel and make nullable. This is called pure view model.</p>
+<pre>using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using Vidly.Models;
+
+namespace Vidly.ViewModels
+{
+    public class MovieFormViewModel
+    {
+        public IEnumerable<Genre> Genres { get; set; }
+        public int? Id { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Release Date field is required.")]
+        public DateTime? ReleaseDate { get; set; }
+
+
+        [Required]
+        [Range(1, 10)]
+        public byte? Stock { get; set; }
+
+
+        [Display(Name = "Genre")]
+        [Required(ErrorMessage = "Genre field is required.")]
+        public int? GenreId { get; set; }
+
+
+        public string Title {
+           get {
+                return Id != 0 ? "Edit Movie" : "New Movie";
+           }
+
+        }
+    }
+}</pre>
+<p>Then we must apply those fields to our controller also.</p>
+<pre>        public ActionResult Edit(int id)
+        {
+            var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+
+            var viewModel = new MovieFormViewModel
+            {
+                Id = movie.Id,
+                Name = movie.Name,
+                ReleaseDate = movie.ReleaseDate,
+                Stock = movie.Stock,
+                GenreId = movie.GenreId,
+                Genres = _context.Genres.ToList()
+
+            };
+            if (movie == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View("MovieForm",viewModel);
+        }</pre>
+		
+<p>To clean the above though we can place them in a constructor.
+</p>
+<pre>        public MovieFormViewModel(Movie movie)
+        {
+            Id = movie.Id;
+            Name = movie.Name;
+            ReleaseDate = movie.ReleaseDate;
+            Stock = movie.Stock;
+            GenreId = movie.GenreId;
+        }</pre>
+		<p>And in the new MovieFormViewModel we pass a movie.</p>
+		<pre>        public ActionResult Edit(int id)
+        {
+            var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+
+            var viewModel = new MovieFormViewModel(movie)
+            {
+             
+                Genres = _context.Genres.ToList()
+
+            };
+            if (movie == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View("MovieForm",viewModel);
+        }</pre>
 </section>
 
 
