@@ -1315,6 +1315,130 @@ namespace Vidly.ViewModels
         }</pre>
 </section>
 
+<section>
+<h1>Restful services with ASP.NET Web API</h1>
+<p>When we have a request MVC framework hands off that request to an action at the controller. This action most of the time returns a View which is then parsed by the Razor view engine and then eventually HTML markup is returned to the client. So with this approachH HTML markup is generated in the server and then returned to the client.</p>
+<p>We can return raw data to to the client directly. This has some benefits :</p>
+<ol>
+<li>Less server resources(improves scalability)</li>
+<li>Less bandwidth(improve performance)</li>
+<li>Support for broad range of clients(multiple endpoints)</li>
+</ol>
+<p>We call these endpoints Data Services or Web APIs(Application Programming Interface). Other web apps can consume these 
+services and add some functionality. Some good examples are youtube, facebook, twitter, google maps etc which we can use their APIs for our sites/apps. In ASP.NET MVC we have ASP.NET Web API.
+</p>
+
+<p>In REST services we have those requests:</p>
+<ol>
+<li>GET(to get a resource)</li>
+<li>POST(create a resource)</li>
+<li>PUT(update resource)</li>
+<li>DELETE(delete a resource)</li>
+</ol>
+
+<h2>Building an API</h2>
+<p>To create an API from scratch first we create the folder we want in our Controllers folder. For example Api. In it we create a 
+controller and choose Web API 2 Controller - Empty.
+</p>
+<p>At first time we will get a text guide that guides us how to configure a Web API which is very easy if you follow it. </p>
+<p>We notice that our controller derives from class ApiController. Here is our API :</p>
+
+<pre>    public class CustomersController : ApiController
+    {
+
+        private ApplicationDbContext _context;
+
+        //data from database 
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        //GET /api/customers /api/customers
+        public IEnumerable<Customer>GetCustomers()
+        {
+            return _context.Customers.ToList();
+        }
+
+        //single customer /api/customers
+        public Customer GetCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            return customer;
+        }
+
+
+        //create customer /api/customers
+        [HttpPost]
+        public Customer CreateCustomer(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            return customer;
+        }
+
+        //update customer api/customers/1
+        [HttpPut]
+        public void UpdateCustomer(int id, Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            customerInDb.Name = customer.Name;
+            customerInDb.Birthdate = customer.Birthdate;
+            customerInDb.IsSubcribed = customer.IsSubcribed;
+            customerInDb.MembershipTypeId = customer.MembershipTypeId;
+
+            _context.SaveChanges();
+        }
+
+
+        //delete customer api/customers/1
+        [HttpDelete]
+        public void DeleteCustomer(int id)
+        {
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            _context.Customers.Remove(customerInDb);
+            _context.SaveChanges();
+        }</pre>
+		
+<h3>Testing our API</h3>
+<p>We can see with the above code in our app if we give the path we get the result in xml.</p>
+
+<img src="xml_from_api.jpg">
+<p>We can use postman to test the data.</p>
+</section>
+
+
+
 
 
 
