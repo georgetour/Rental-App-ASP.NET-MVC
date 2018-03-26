@@ -1435,6 +1435,238 @@ controller and choose Web API 2 Controller - Empty.
 
 <img src="xml_from_api.jpg">
 <p>We can use postman to test the data.</p>
+
+<h3>Making the API stable</h3>
+<p>Maybe we need to change a property or something this will have an impact in our API. We must make a 
+contract that this API will depend on. To solve this we need a DTO(data transfer object).
+</p>
+
+<p>First our API should never receive domain objects directly like the Customer customer we have.
+Also by using domain objects we are opening security holes.
+</p>
+<p>We add a new folder in our project called Dtos. Then a new class that will have the name and then Dto for example
+CustomerDto.</p>
+<p>Then we copy all our properties from the model to the Dto class.</p>
+
+<pre>using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using Vidly.Models;
+
+namespace Vidly.Dtos
+{
+    public class CustomerDto
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Name field must not be empty")]
+        [StringLength(255)]
+        public string Name { get; set; }
+
+        public bool IsSubcribed { get; set; }
+
+        public byte MembershipTypeId { get; set; }
+
+        [Min18YearsIfMember]
+        public DateTime? Birthdate { get; set; }
+
+    }
+}</pre>
+
+<p>Finally we should map to Dto and our Dto properties back to our customer object. We can;t do this manually and we will use AutoMapper.</p>
+
+<h3>AutoMapper</h3>
+<p>In our package manager console :</p>
+<pre>install-package automapper</pre>
+<p>Then we create a mapping profile which determines how objects of different types can be mapped to each other.</p>
+<p>In App Start we add new class MappingProfile for example and will ook like this :</p>
+
+<pre>using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Vidly.Models;
+using Vidly.Dtos;
+
+namespace Vidly.App_Start
+{
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            //Mapping configuration between two types source and target
+            Mapper.CreateMap<Customer, CustomerDto>();
+            Mapper.CreateMap<CustomerDto, Customer>();
+        }
+    }
+}</pre>
+
+<p>We need to have the mapping when the application starts.</p>
+
+<pre>using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
+using System.Web.Http;
+using Vidly.App_Start;
+
+namespace Vidly
+{
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            Mapper.Initialize(c => c.AddProfile<MappingProfile>();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+    }
+}</pre>
+
+<p>So now our API will look like this :</p>
+
+<pre>using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Vidly.Dtos;
+using Vidly.Models;
+
+namespace Vidly.Controllers.Api
+{
+    public class CustomersController : ApiController
+    {
+
+        private ApplicationDbContext _context;
+
+        //data from database 
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        //GET /api/customers /api/customers
+        public IEnumerable<CustomerDto>GetCustomers()
+        {
+            return _context.Customers.ToList().Select(Mapper.Map<Customer,CustomerDto>);
+        }
+
+        //single customer /api/customers
+        public CustomerDto GetCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            return Mapper.Map<Customer,CustomerDto>(customer);
+        }
+
+
+        //create customer /api/customers
+        [HttpPost]
+        public CustomerDto CreateCustomer(CustomerDto customerDto)
+        {
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+
+            var customer = Mapper.Map<CustomerDto, Customer>(customerDto);
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            customerDto.Id = customer.Id;
+
+            return customerDto;
+        }
+
+        //update customer api/customers/1
+        [HttpPut]
+        public void UpdateCustomer(int id, CustomerDto customerDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            Mapper.Map<CustomerDto, Customer>(customerDto, customerInDb);
+
+            _context.SaveChanges();
+        }
+
+
+        //delete customer api/customers/1
+        [HttpDelete]
+        public void DeleteCustomer(int id)
+        {
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            _context.Customers.Remove(customerInDb);
+            _context.SaveChanges();
+        }
+
+    }
+}</pre>
+
+<h3>Using camelcase in our API</h3>
+<p>Our API has a config file as our project. So in App_Start -> WebApiConfig  </p>
+<pre>using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+
+namespace Vidly
+{
+    public static class WebApiConfig
+    {
+        public static void Register(HttpConfiguration config)
+        {
+            //Changing case to camelCase
+            var settings = config.Formatters.JsonFormatter.SerializerSettings;
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            settings.Formatting = Formatting.Indented;
+
+            config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+        }
+    }
+}</pre>
 </section>
 
 
