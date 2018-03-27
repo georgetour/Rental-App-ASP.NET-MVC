@@ -1667,6 +1667,48 @@ namespace Vidly
         }
     }
 }</pre>
+
+<h3>IHttp ActionResult</h3>
+<p>When we create RESTful APIs the status code of the request should be 201 and not 200. By using IHttpActionResult 
+we can have some helper methods like BadRequest(). Also we have use the Created method so we return a new Uri and the object created.
+</p>
+<p>So the code would look :</p>
+
+<pre>
+        //single customer /api/customers
+        public IHttpActionResult GetCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+            return Ok(Mapper.Map<Customer,CustomerDto>(customer));
+        }
+
+
+        //create customer /api/customers
+        [HttpPost]
+        public IHttpActionResult CreateCustomer(CustomerDto customerDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var customer = Mapper.Map<CustomerDto, Customer>(customerDto);
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            customerDto.Id = customer.Id;
+
+            //
+            return Created(new Uri(Request.RequestUri + "/" + customer.Id), customerDto);
+        }
+
+
+
+</pre>
+
 </section>
 
 
