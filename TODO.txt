@@ -8,6 +8,8 @@ For stock we can't put 0 since the number must be between 1-20(Range data annota
 
 27 Mar 2018
 Build an API for crud operations for movies
-- Getting all movies
-- Getting Single Movie
-- Adding, Updating, Deleting a movie
+- Getting all movies ok
+- Getting Single Movie ok
+- Adding ok, Updating ok , Deleting a movie ok
+
+Be careful for the error we will get 

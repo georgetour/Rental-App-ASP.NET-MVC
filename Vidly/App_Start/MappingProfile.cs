@@ -13,8 +13,14 @@ namespace Vidly.App_Start
         public MappingProfile()
         {
             //Mapping configuration between two types source and target
-            Mapper.CreateMap<Customer, CustomerDto>();
-            Mapper.CreateMap<CustomerDto, Customer>();
+            //Domain to Dto
+            Mapper.CreateMap<Customer, CustomerDto>();//Fix since Id shouldn't be changed because is a key property
+            Mapper.CreateMap<Movie, MovieDto>();
+
+
+            //Dto to Domain
+            Mapper.CreateMap<CustomerDto, Customer>().ForMember(m => m.Id, opt => opt.Ignore()); //Fix since Id shouldn't be changed because is a key property
+            Mapper.CreateMap<MovieDto, Movie>().ForMember(m => m.Id, opt => opt.Ignore()); ;
         }
     }
 }
