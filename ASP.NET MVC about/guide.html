@@ -1712,6 +1712,149 @@ we can have some helper methods like BadRequest(). Also we have use the Created 
 </section>
 
 
+<section>
+<h1>Client-side</h1>
+<p>We have created a Delete button in our view for customers in our table that with ajax call will Delete current customer.</p>
+<pre>
+            &lt;tbody&gt;
+                @foreach (var customer in Model)
+                {
+                    &lt;tr&gt;
+                        &lt;td&gt;@Html.ActionLink(customer.Name,"Edit","Customers",new { id = customer.Id },null)&lt;/td&gt;
+                        &lt;td&gt;@customer.MembershipType.Membership&gt;/td&gt;
+                        &lt;td&gt;
+                            &lt;button data-customer-id="@customer.Id" class="btn-link js-delete">Delete&lt;/button&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                }
+
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+
+        @section scripts
+        { 
+        &lt;script&gt;
+            $(document).ready(function () {
+                $("#customers .js-delete").on("click", function () {
+
+                    var button = $(this);
+
+                    if (confirm("Are you sure want to delete this customer?"))
+                    {
+                        $.ajax({
+                            url: "/api/customers/" + button.attr("data-customer-id"),
+                            method: "DELETE",
+                            success: function () {
+                                button.parents("tr").remove();
+                            }
+                        })
+                    }        
+                });
+            });
+            &lt;/script&gt;
+
+</pre>
+<h2>Bootbox.js</h2>
+<p>Bootbox is a javascript library that makes bootstrap modals easy to use.
+To add bootbox in an asp.net mvc project we will install its package in our package manager console.
+</p>
+
+<pre>PM> install-package bootbox -version:4.3.0</pre>
+<p>We will see we have bootbox.js and bootbox.min.js to our scripts. Now we will have to add it to our bundle.</p>
+
+<pre>            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                      "~/Scripts/bootstrap.js",
+                      "~/scripts/bootbox.js",
+                      "~/Scripts/respond.js"));</pre>
+
+<p><strong>With ASP.NET MVC when we add something to our BundleCofig.cs they are minified automatically!</strong> </p>
+
+<p>And now with bootbox we have in our script :</p>
+<pre>
+        &lt;script>
+            $(document).ready(function () {
+                $("#customers .js-delete").on("click", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    button.parents("tr").remove();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script>
+
+
+
+</pre>
+<h3>Bootbox.js in action</h3>
+<img src="bootbox_js.jpg">
+
+<h3>Improving our jquery code</h3>
+<p>We can improve the click handler by adding a filter since if we have a lot customers we were going to have 
+a separate handler function in the memory.
+ </p>
+ <pre>        &lt;script>
+            $(document).ready(function () {
+                $("#customers").on("click",".js-delete", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    button.parents("tr").remove();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script></pre>
+			
+<h2>DataTables jQuery Plugin</h2>
+<p>DataTables is a jQuery plugin that gives us pagination out of the box. At our pckage manager console :</p>
+<pre>PM>install-package jquery.datatables -version:1.10.11</pre>
+<p>We will have a folder called DataTables. We are going only to need two scripts. So we add them to our bundle config and the css :</p>
+
+<pre>            bundles.Add(new ScriptBundle("~/bundles/lib").Include(
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/bootstrap.js",
+                        "~/scripts/bootbox.js",
+                        "~/Scripts/respond.js",
+                        "~/Scripts/DataTables/jquery.datatables.js",
+                        "~/Scripts/DataTables/datatables.bootstrap.js"
+                        ));</pre>
+
+						
+<pre>            bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/bootstrap-lumen.css",
+                      "~/Content/Datatables/css/datatables.bootstrap.css",
+                      "~/Content/site.css"));</pre>
+					  
+<p>In our script we just add the id of the table :</p>
+<pre>$("#customers").DataTable();</pre>
+<p><strong>Be careful to have correct tags in table else you will get an uncaught javascript error.</strong></p>
+<p>Though if we have many data its better to get raw data with json give it to the tables and generate html mark on the client.
+Json objects are more lightweight than html markup.
+</p>
+
+
+</section>
+
 
 
 
