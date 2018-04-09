@@ -1851,8 +1851,124 @@ a separate handler function in the memory.
 <p>Though if we have many data its better to get raw data with json give it to the tables and generate html mark on the client.
 Json objects are more lightweight than html markup.
 </p>
+<h3>Datatables with AJAX source</h3>
+<p>If we have a lot of pages with data we can use AJAX to show only the data we want. If our API responded 
+we would have an array of objects and we would set dataSrc:"customers"
+ </p>
+ <pre>count : 10,
+	  customers:[
+	  {...},
+	  {...}
+	  ...
+	  ]
+ </pre>
+<p>But since now we are bringing already an array of objects we set dateSrc to an empty string. Next we need to specify 
+our columns. For each column we supply an object. For example data property tells where to get data for this column. But if we 
+it isn't plain text and for example we want a link we will use render as function with some parameters.  Since we are returning columns with data we can remove the data from tbody in our table.
+</p>
+<p>Also we can write some jquery to have a message if we don't have anything returned from our API.</p>
+<pre>
+        &lt;script>
+            $(document).ready(function () {
 
+                $("#customers").DataTable({
+                    ajax: {
+                        url: "/api/customers",
+                        dataSrc:""
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            render: function (data,type,customer) {
+                                return "&lt;a href='/customer/edit/" + customer.id + "'>" + customer.name + "&lt;/a>";
+                            }
+                        },
+                        {
+                            data:"name"
+                        },
+                        {
+                            data: "id",
+                            render: function (data) {
+                                return "&lt;button class='btn-link js-delete' data-customer-id=" + data + ">Delete&lt;/button>";
+                            }
+                        }
+                    ]
+                });
 
+                $("#customers").on("click",".js-delete", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    button.parents("tr").remove();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script>
+
+</pre>
+
+<p>Since dataTable stores the results in its own tables we should remove it also from them. Check the table.row line</p>
+
+<pre>        &lt;script>
+            $(document).ready(function () {
+
+                var table = $("#customers").DataTable({
+                    ajax: {
+                        url: "/api/customers",
+                        dataSrc:""
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            render: function (data,type,customer) {
+                                return "&lt;a href='/customer/edit/" + customer.id + "'>" + customer.name + "&lt;/a>";
+                            }
+                        },
+                        {
+                            data:"membershipType.membership"
+                        },
+                        {
+                            data: "id",
+                            render: function (data) {
+                                return "&lt;button class='btn-link js-delete' data-customer-id=" + data + ">Delete&lt;/button>";
+                            }
+                        }
+                    ]
+                });
+
+                $("#customers").on("click",".js-delete", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script></pre>
+			
+<a href="http://datatables.net"><h3>Datatables API</h3> </a>			
+
+<p><i>If you have thousands of records with big fat tables properties we need to enable dataTables on the server side.</i></p>
 </section>
 
 

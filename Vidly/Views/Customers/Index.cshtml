@@ -8,10 +8,7 @@
 <h2>Customers</h2>
 @Html.ActionLink("New Customer", "NewCustomer", "Customers", null, new { @class = "btn btn-primary" })
 
-    @if (!Model.Any())
-    {
-        <p>Customer list is empty </p>
-    } else {
+   
         <table id="customers" class="table table-bordered table-hover" >
             <thead>
                 <tr>
@@ -21,17 +18,6 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var customer in Model)
-                {
-                    
-                    <tr>
-                        <td>@Html.ActionLink(customer.Name,"Edit","Customers",new { id = customer.Id },null)</td>
-                        <td>@customer.MembershipType.Membership</td>
-                        <td>
-                            <button data-customer-id="@customer.Id" class="btn-link js-delete">Delete</button>
-                        </td>
-                    </tr>
-                }
 
             </tbody>
         </table>
@@ -41,7 +27,29 @@
         <script>
             $(document).ready(function () {
 
-                $("#customers").DataTable();
+                var table = $("#customers").DataTable({
+                    ajax: {
+                        url: "/api/customers",
+                        dataSrc:""
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            render: function (data,type,customer) {
+                                return "<a href='/customer/edit/" + customer.id + "'>" + customer.name + "</a>";
+                            }
+                        },
+                        {
+                            data:"membershipType.membership"
+                        },
+                        {
+                            data: "id",
+                            render: function (data) {
+                                return "<button class='btn-link js-delete' data-customer-id=" + data + ">Delete</button>";
+                            }
+                        }
+                    ]
+                });
 
                 $("#customers").on("click",".js-delete", function () {
 
@@ -53,7 +61,7 @@
                                 url: "/api/customers/" + button.attr("data-customer-id"),
                                 method: "DELETE",
                                 success: function () {
-                                    button.parents("tr").remove();
+                                    table.row(button.parents("tr")).remove().draw();
                                 }
                             })
                         }
@@ -63,5 +71,5 @@
             });
             </script>
             
-        }
+        
     }
