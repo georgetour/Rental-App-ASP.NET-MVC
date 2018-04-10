@@ -20,6 +20,11 @@
 		transform: scale(1.2);
 		
 	}
+	
+	h1{
+	
+		font-size:1.8em;
+	}
 
 
 </style>
@@ -1969,6 +1974,59 @@ it isn't plain text and for example we want a link we will use render as functio
 <a href="http://datatables.net"><h3>Datatables API</h3> </a>			
 
 <p><i>If you have thousands of records with big fat tables properties we need to enable dataTables on the server side.</i></p>
+</section>
+
+<section>
+
+<h1>Authentication</h1>
+
+<h2>Authentication Options</h2>
+
+<p>When we create a new ASP.NET project at the begin we see </p>
+<img src="authentication_new_project.jpg">
+<p>We have 4 different authentication options :</p>
+<img src="authentication_options.jpg">
+
+<br>
+
+<ol>
+
+<li><h3>No authentication</h3><p>Used for applications that don't use any authentication services.</p></li>
+<li><h3>Individual User Accounts</h3><p>It's the default option for ASP.NET MVC projects(used for web sites). Also we can use
+social logins like facebook, Google, Twitter etc.
+</p>
+</li>
+<li><h3>Organizational Accounts</h3> <p>Useful if you want to enable single sign in for internal and cloud Apps using Active Directory.</p></li>
+<li><h3>Windows Authentication</h3><p>Used for intranet applications.</p></li>
+</ol>
+
+<p>Individual User Accounts is the most commmon. Every ASP.NET MVC application HAS BY DEFAULT Register and Sign in options. We can find them in our navbar.</p>
+
+<h2>ASP.NET Identity</h2>
+<p>This is a framework inside our app that uses three assemblies :</p>
+<img src="asp.net.identity.jpg">
+<p>It has domain classes and provides them through its API like :</p>
+<ol>
+
+<li>UserManager</li>
+<li>RoleMnager</li>
+<li>SignInMnager</li>
+
+</ol>
+
+<p>These classes talk to UserStore and RoleStore. When we created our app we had some tables created for us like ASP.NetUsers etc with some properties. We can see in our Models folder IdentityModels.cs. We can see that they derive from classes which are part
+of ASP.NET Identity.
+</p>
+
+<img src="IdentityModel.cs.jpg">
+
+<br>
+
+<p>In our Controllers folder we can see AccountController which is responsible for Register, Sign In, etc.</p>
+<p>We have a Register Action which brings the View which is the form for registering. Also we can see the Register action that
+creates the user by post request. We have options like auto sign in when registering sending emails etc.
+</p>
+
 </section>
 
 
