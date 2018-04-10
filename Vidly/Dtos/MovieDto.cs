@@ -19,12 +19,13 @@ namespace Vidly.Dtos
 
         public DateTime DateAdded { get; set; }
 
-
         [Range(1, 10)]
         public byte Stock { get; set; }
 
         [Required]
         public int GenreId { get; set; }
+
+        public GenreDto Genre { get; set; }
 
 
     }
