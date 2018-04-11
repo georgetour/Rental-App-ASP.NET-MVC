@@ -2027,7 +2027,116 @@ of ASP.NET Identity.
 creates the user by post request. We have options like auto sign in when registering sending emails etc.
 </p>
 
+<h2>Restricting Access</h2>
+<p>In ASP.NET MVC we have an attribute called Authorize. It acts like a filter. A filter in ASP.NET MVC will check if the current user is logged in or not. If not it will redirect the user to login page. We will have a query string that will show where the user will be redirected if logged in.</p>
+<p>If we apply this attribute in the controller the filter will be applied to all actions in the controller. The attribute 
+is the below code :</p>
+
+
+<pre>Authorize</pre>
+<p>Also we can apply this attribute globally so everything will be protected. If we need to apply it globally we will add it in 
+App_Start in FilterConfig which registers global filters.</p>
+
+<pre>using System.Web;
+using System.Web.Mvc;
+
+namespace Vidly
+{
+    public class FilterConfig
+    {
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new HandleErrorAttribute());
+            filters.Add(new AuthorizeAttribute());
+        }
+    }
+}</pre>
+
+<p>If we wanted to allow access to anonymous user to a page we use the AllowAnonymous</p>
+<pre>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Vidly.Controllers
+{
+    [AllowAnonymous]
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }</pre>
+
+<h2>Restricting access to specific roles</h2>	
+		
+<p>To create roles we go to our register action in AccountController.</p>		
+<pre>        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                    var roleManager = new RoleManager<IdentityRole>(roleStore);
+                    await roleManager.CreateAsync(new IdentityRole("CanManageMovie"));</pre>
+	
+<p>Then we need to assign a new user to this role by pasing the id and name of the role.</p>
+
+<pre>await UserManager.AddToRoleAsync(user.Id ,"CanManageMovies");</pre>
+
+<p>So we run the application and the user that will be registered will be assigned to this role.
+<strong>Don't forget to remove these lines.</strong>
+</p>
+
+<p>After that we will create a migration that we will seed users. To easily do that open the table check the users that 
+have registered right click script and we will get the insert queries. Same for our roles.
+</p>
+	<img src="asp.net.user.roles.jpg">
+	
+<p>Finally we need to associate our storemanager user with the new role. </p>
+
+<img src="assign_user_to_role.jpg">
+
+<p>So in our SeedUsers migration we will have </p>
+<pre>namespace Vidly.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class SeedUsers : DbMigration
+    {
+        public override void Up()
+        {
+            Sql(@"
+INSERT INTO [dbo].[AspNetUsers] ([Id], [Email], [EmailConfirmed], [PasswordHash], [SecurityStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEndDateUtc], [LockoutEnabled], [AccessFailedCount], [UserName]) VALUES (N'2ac14dd7-a957-4543-8f0b-b2c2405175d6', N'guest@vidly.com', 0, N'AEFRxemvAmBAak3vZN49b9rMkJ0TZobNEdh+LrMPWAOmITCUHki9BDSgYVKEufeItQ==', N'3ba7f22f-a566-4903-ab4f-13f372a06f2e', NULL, 0, 0, NULL, 1, 0, N'guest@vidly.com')
+INSERT INTO [dbo].[AspNetUsers] ([Id], [Email], [EmailConfirmed], [PasswordHash], [SecurityStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEndDateUtc], [LockoutEnabled], [AccessFailedCount], [UserName]) VALUES (N'a14dafcf-9e41-436f-bf29-27b7517905ab', N'storemanager@vidly.com', 0, N'ADMyvV97WPqu5yO5ZYkxfK4oLbJuPP/TYFwyH33UKwUR+a5LLHS8QeSgXDmIzws2GA==', N'9bbb1695-8353-42df-a940-91fe2e1934ee', NULL, 0, 0, NULL, 1, 0, N'storemanager@vidly.com')
+
+INSERT INTO [dbo].[AspNetRoles] ([Id], [Name]) VALUES (N'196c07ca-1033-4ce5-bfd9-686e6eb271aa', N'CanManageMovies')
+INSERT INTO [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'a14dafcf-9e41-436f-bf29-27b7517905ab', N'196c07ca-1033-4ce5-bfd9-686e6eb271aa')
+
+");
+
+        }
+        
+        public override void Down()
+        {
+        }
+    }
+}</pre>
+
+<p>We will remove these records from database and run the migration.</p>
+<pre>update-database</pre>
+<p>Microsoft and other solutions suggest different approach but this is the correct one.</p>
 </section>
+
+
 
 
 
