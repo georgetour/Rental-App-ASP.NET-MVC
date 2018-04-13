@@ -2087,7 +2087,7 @@ namespace Vidly.Controllers
                     var roleManager = new RoleManager<IdentityRole>(roleStore);
                     await roleManager.CreateAsync(new IdentityRole("CanManageMovie"));</pre>
 	
-<p>Then we need to assign a new user to this role by pasing the id and name of the role.</p>
+<p>Then we need to assign a new user to this role by pasing the id and name of the role. So when the user registers it will have those roles.</p>
 
 <pre>await UserManager.AddToRoleAsync(user.Id ,"CanManageMovies");</pre>
 
@@ -2134,6 +2134,50 @@ INSERT INTO [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'a14dafcf-9e41
 <p>We will remove these records from database and run the migration.</p>
 <pre>update-database</pre>
 <p>Microsoft and other solutions suggest different approach but this is the correct one.</p>
+
+<h2>Show pages only to signed in users and specific roles </h2>
+<p>If we have simple view we can use if else statements to show what we want but this will end up with a lot ifs and else.</p>
+<p>The best solution is to create entirely new views for each role.</p>
+<p>Then we will return the view we want according to user rights in our controller :</p>
+<h2>User.IsInRole()</h2>
+<pre>        public ActionResult Index()
+        {
+            if (User.IsInRole("CanManageMovies"))
+                return View("List");
+
+            else
+                return View("ReadOnlyList");
+
+
+        }</pre>
+
+<p>We need though to fix security holes so we prevent direct access for user that is doesn't have correct role.</p>
+<p>We must Authorize Roles in controller and in our API also.</p>
+<pre>        [Authorize(Roles = "CanManageMovies")]
+        public ActionResult NewMovie()
+        {
+            var genres = _context.Genres.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Genres = genres
+            };
+
+            return View("MovieForm",viewModel);
+        }</pre>
+		
+<p>To prevent these magic string create a static class and constants for the roles.</p>
+<pre>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Vidly.Models
+{
+    public static class RoleName
+    {
+        public const string CanManageMovies = "CanManageMovies";
+    }
+}</pre>
 </section>
 
 
