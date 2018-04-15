@@ -11,15 +11,11 @@
 		padding:10px;margin-bottom :20px;
 	}
 	
-	img{
+	.small-image{	
 		width:50%;
 	}
 	
-	img:hover{
-		margin-left:100px;
-		transform: scale(1.2);
-		
-	}
+	
 	
 	h1{
 	
@@ -53,11 +49,13 @@ by many frameworks like Laravel, RubyOnRails,ASP.NET MVC etc.
 <h1>ASP.NET MVC structure</h1>
 
  <ul>
- <li><h2>App_Data</h2>Database files will be stored here</li>
+ <li><h2>App_Data</h2>Database files will be stored here<strong>(To show mdf files in App_Data)</strong><br>
+ <img class="small-image" src="images/mdf_files_app_data.jpg">
+ </li>
  <li><h2>App_Start</h2>Includes some classes for when the application is started
 	<ol>
 		<li><h3>Routeconfig.cs</h3><p>This is the configuration or our routing rules.</p>
-		<img src="route_config.jpg">
+		</p><img class="small-image" src="images/route_config.jpg">
 		<p>So if our url matches this patterns we have: First part is the name of the controller,second part is the name of the action, third part is an ID
 		we can pass to that action. With this rule if we send a request to movies/popular in runtime we have a MoviesController and a Popular() method.
 		Another example is with /movies/edit/1 we get MoviesController and its method Edit(int id) with id 1.
@@ -96,7 +94,7 @@ by many frameworks like Laravel, RubyOnRails,ASP.NET MVC etc.
 <li><h2>Views</h2>
  <p>We have our views which is the V in MVC. In there we have folders named after controllers(without the ending controllers) in our application.
  By convention when we use a view ASP.NET will look for the same name as the controller.
- <img src="view.jpg">
+ </p><img class="small-image" src="images/view.jpg">
  <p>We also have a folder called Shared which includes the views that can be viewed by different controllers.</p>
 </li>
 
@@ -142,16 +140,16 @@ called MoviesController with an action called random. So an action is a method r
 some code for us. Then we create an empty one. By default we have an Index action which returns the View. We have to create what methods/actions we will have.
  </p>
  <p>We have to say to this newlly created controller that we will use the models.
-<img src="using_models_in_controller.jpg">
+</p><img class="small-image" src="images/using_models_in_controller.jpg">
  </p>
  <p>As we see it returns the View which we should create in our folder Movies that will be called Random.
- <img src="add_view.jpg">
+ </p><img class="small-image" src="images/add_view.jpg">
  </p>
  <p>There we can use a template and choose as a <strong>partial view</strong> which is like a widget which can be used on different views.
- <img src="partial_view.jpg">
+ </p><img class="small-image" src="images/partial_view.jpg">
  </p>
 <p>Also we have to select the layout since we want all our pages look similar in our app. By default our mvc project has a layout to choose.
-<img src="layout_template.jpg">
+</p><img class="small-image" src="images/layout_template.jpg">
 
 </p>
 
@@ -162,16 +160,16 @@ some code for us. Then we create an empty one. By default we have an Index actio
 
 </ol>
 <p>Back at our MoviesController we pass the parameter we want to show in our View method.
-<img src="return_view.jpg">
+</p><img class="small-image" src="images/return_view.jpg">
 </p>
 
 <p>When we want to write C#  and have it shown in our View we start with @. Then we write Model. Every View has 
 this property which give us access to the Model we passed to it and the controller. If we type . at the Model we will see
 that the type of this model is dynamic.
-<img src="dynamic.jpg">
+</p><img class="small-image" src="images/dynamic.jpg">
 </p>
 <p>On top of the file we need to use a directive to specify the type of the Model for this View.
-<img src="fully_qualified_name.jpg">
+</p><img class="small-image" src="images/fully_qualified_name.jpg">
 </p>
 <p>After that we can see that we can access the Name property for Model and we can put it in our html.</p>
 </section>
@@ -232,7 +230,7 @@ that the type of this model is dynamic.
             return RedirectToAction("Index","Home");
         }</pre>
 		<p>If we want to have new query strings we will have to pass a third argument.
-		<img src="query_strings.jpg"></p>
+		</p><img class="small-image" src="images/query_strings.jpg">
 </li>
 
 <li>
@@ -270,10 +268,10 @@ that the type of this model is dynamic.
 
 <ol>
 <li><p>In the URL : /movies/edit/1 (if the paramater is not named id but something else since in our default we must have it as id we will get an error)</p>
-<img src="parameter_resource_url.jpg">
+</p><img class="small-image" src="images/parameter_resource_url.jpg">
 </li>
 <li><p>In the query string : /movies/edit?id=2</p>
-<img src="parameter_resource_query_string.jpg">
+</p><img class="small-image" src="images/parameter_resource_query_string.jpg">
 </li>
 <li>In the form data : id=1</li>
 
@@ -297,7 +295,7 @@ that the type of this model is dynamic.
 </ol>
 
 <p>If we don't have the parameter we will get an error.
-<img src="no_parameter.jpg">
+</p><img class="small-image" src="images/no_parameter.jpg">
 </p>
 </li>
 
@@ -313,7 +311,7 @@ The most common overload method is the one with three parameters(name,URL, defau
                 "movies/released/{year/{month}}",
                 new {controller = "Movies",action="ByReleaseDate"});</pre>
 <p>Next we create the action(if we type mvcaction4 and tab we can create it fast). If the url doesn't matches the RouteConfig patterns we will get an error.
-<img src="custom_routing.jpg">
+</p><img class="small-image" src="images/custom_routing.jpg">
 </p>
 <p>Regular Expression(if the url doesn't matches the expression we will get an error)</p>
 <pre>            routes.MapRoute(
@@ -407,7 +405,7 @@ The most common overload method is the one with three parameters(name,URL, defau
 <p>A view model is a model specifically built for a view. It includes any data and rules specific to that view. For example if we
 we didn't have the relation tou our model but we needed to show them in a view. </p>
 <p>First we create a folder that will have our View Models. Then a class that will have the objects we want to relate.</p>
-<img src="view_models.jpg">
+</p><img class="small-image" src="images/view_models.jpg">
 <p>Then at our controller a viewModel :</p>
 <pre>        public ActionResult Random()
         {
@@ -498,8 +496,8 @@ else
     &lt;/ul>
 }</pre>
 
-<p><strong>Remember that type you pass in View of action result must be same in View:</strong></p>
-<img src="type_controller_model.jpg">
+<p><strong>Remember that type you pass in View of action result must be same in View:</strong>
+</p><img class="small-image" src="images/type_controller_model.jpg">
 
 <p>Rendering something dynamically : </p>
 <pre>@{ 
@@ -519,7 +517,7 @@ else
 <p>It's something that you can use it in different smaller areas like widgets etc or the navbar can be be in a partial view.
 To create a partial view right click in views then add View. By convention we use an underscore for a partial view.
 </p>
-<img src="partial_views.jpg">
+</p><img class="small-image" src="images/partial_views.jpg">
 <p>Then to render it where we want we call the Html property of our Views.</p>
 <pre>&lt;body>
     @Html.Partial("_NavBar")</pre>
@@ -572,7 +570,7 @@ name of link, actionName, controllerName . </p>
     }</pre>
 
 <p>Forth we must generate our database by running the command update-database. We will have an mdf file created in our App-data :</p>
-<img src="generating_database.jpg">
+</p><img class="small-image" src="images/generating_database.jpg">
 </section>
 
 <section>
@@ -791,7 +789,7 @@ the fields accordingly :
 
     }
 }</pre>
-<img src="form_fields_according_to_model.jpg">
+</p><img class="small-image" src="images/form_fields_according_to_model.jpg">
 
 <pre>@model Vidly.Models.Customer
 
@@ -1194,7 +1192,7 @@ the object with the fields so it will get 0 value instead of empty.
 
 <h2>Prevent Cross-Site Request Forgery</h2>
 <p>We can see in the form data in our Network in developer tools the security hole.</p>
-<img src="security_hole.jpg">
+</p><img class="small-image" src="images/security_hole.jpg">
 <p>To prevent this firtt we must make sure that this request comes only from the customer form.</p>
 <ol>
 <li>First we use at our form
@@ -1202,7 +1200,7 @@ the object with the fields so it will get 0 value instead of empty.
 <p>We can see we have a hidden field created that's for verification which this value is also stored as a cookie in users computer
 in encrypted format. If the cookie matches the value then its a legitimate request otherwise it's considered as an attack.
 .</p>
-<img src="antiforgery-token.jpg">
+</p><img class="small-image" src="images/antiforgery-token.jpg">
 </li>
 
 <li>Second we surround our action that has the HttpPost with the validation AntiForgeryToken.
@@ -1225,7 +1223,7 @@ in encrypted format. If the cookie matches the value then its a legitimate reque
 
             return View("MovieForm",viewModel);
         }</pre>
-<img src="filled-fields.jpg">
+</p><img class="small-image" src="images/filled-fields.jpg">
 <p>To fix this we get all properties from our Model and place it an our ViewModel and make nullable. This is called pure view model.</p>
 <pre>using System;
 using System.Collections.Generic;
@@ -1438,7 +1436,7 @@ controller and choose Web API 2 Controller - Empty.
 <h3>Testing our API</h3>
 <p>We can see with the above code in our app if we give the path we get the result in xml.</p>
 
-<img src="xml_from_api.jpg">
+</p><img class="small-image" src="images/xml_from_api.jpg">
 <p>We can use postman to test the data.</p>
 
 <h3>Making the API stable</h3>
@@ -1802,7 +1800,7 @@ To add bootbox in an asp.net mvc project we will install its package in our pack
 
 </pre>
 <h3>Bootbox.js in action</h3>
-<img src="bootbox_js.jpg">
+</p><img class="small-image" src="images/bootbox_js.jpg">
 
 <h3>Improving our jquery code</h3>
 <p>We can improve the click handler by adding a filter since if we have a lot customers we were going to have 
@@ -1852,7 +1850,7 @@ a separate handler function in the memory.
 					  
 <p>In our script we just add the id of the table :</p>
 <pre>$("#customers").DataTable();</pre>
-<p><strong>Be careful to have correct tags in table else you will get an uncaught javascript error.</strong></p>
+<p><strong>Be careful to have correct tags in table else you will get an uncaught javascript error.</strong>
 <p>Though if we have many data its better to get raw data with json give it to the tables and generate html mark on the client.
 Json objects are more lightweight than html markup.
 </p>
@@ -1973,7 +1971,7 @@ it isn't plain text and for example we want a link we will use render as functio
 			
 <a href="http://datatables.net"><h3>Datatables API</h3> </a>			
 
-<p><i>If you have thousands of records with big fat tables properties we need to enable dataTables on the server side.</i></p>
+<p><i>If you have thousands of records with big fat tables properties we need to enable dataTables on the server side.</i>
 </section>
 
 <section>
@@ -1983,9 +1981,9 @@ it isn't plain text and for example we want a link we will use render as functio
 <h2>Authentication Options</h2>
 
 <p>When we create a new ASP.NET project at the begin we see </p>
-<img src="authentication_new_project.jpg">
+</p><img class="small-image" src="images/authentication_new_project.jpg">
 <p>We have 4 different authentication options :</p>
-<img src="authentication_options.jpg">
+</p><img class="small-image" src="images/authentication_options.jpg">
 
 <br>
 
@@ -2004,7 +2002,7 @@ social logins like facebook, Google, Twitter etc.
 
 <h2>ASP.NET Identity</h2>
 <p>This is a framework inside our app that uses three assemblies :</p>
-<img src="asp.net.identity.jpg">
+</p><img class="small-image" src="images/asp.net.identity.jpg">
 <p>It has domain classes and provides them through its API like :</p>
 <ol>
 
@@ -2018,7 +2016,7 @@ social logins like facebook, Google, Twitter etc.
 of ASP.NET Identity.
 </p>
 
-<img src="IdentityModel.cs.jpg">
+</p><img class="small-image" src="images/IdentityModel.cs.jpg">
 
 <br>
 
@@ -2098,11 +2096,11 @@ namespace Vidly.Controllers
 <p>After that we will create a migration that we will seed users. To easily do that open the table check the users that 
 have registered right click script and we will get the insert queries. Same for our roles.
 </p>
-	<img src="asp.net.user.roles.jpg">
+	</p><img class="small-image" src="images/asp.net.user.roles.jpg">
 	
 <p>Finally we need to associate our storemanager user with the new role. </p>
 
-<img src="assign_user_to_role.jpg">
+</p><img class="small-image" src="images/assign_user_to_role.jpg">
 
 <p>So in our SeedUsers migration we will have </p>
 <pre>namespace Vidly.Migrations
@@ -2139,6 +2137,8 @@ INSERT INTO [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'a14dafcf-9e41
 <p>If we have simple view we can use if else statements to show what we want but this will end up with a lot ifs and else.</p>
 <p>The best solution is to create entirely new views for each role.</p>
 <p>Then we will return the view we want according to user rights in our controller :</p>
+
+
 <h2>User.IsInRole()</h2>
 <pre>        public ActionResult Index()
         {
@@ -2178,11 +2178,79 @@ namespace Vidly.Models
         public const string CanManageMovies = "CanManageMovies";
     }
 }</pre>
+
+<h2>Adding Data to Register Form</h2>
+<p>We can change the form in ASP.NET MVC. First we always start with the domain. We go to our IdentityModels. Then we add the property we want.
+
+ </p>
+ <pre>    public class ApplicationUser : IdentityUser
+    {
+
+        public string DrivingLicense;</pre>
+
+<p>Since we made a change to our domain we must add-migration.</p>
+<p>Now we need to make our changes to our view Account-> Register.</p>
+<pre>&lt;div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        &lt;div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        &lt;/div>
+    &lt;/div><pre>
+
+	
+	<p>After we added the the field we want then in AccountViewModel:</p>
+<pre>    public class RegisterViewModel
+    {
+        [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
+</pre>
+<p>Final step when we post the form we need to put this driving license to our domain object. We go to our Controllers
+and find the Register() Action
+</p>
+<pre>        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    DrivingLicense = model.DrivingLicense
+
+                };</pre>
+
 </section>
 
 
 
 
+
+
+
+
+ <script src="assets/jquery-3.3.1.min.js"><br></script>
+<script>$( document ).ready(function() {
+	
+	$('.small-image').click(function() {
+	    $(this).find('img').fadeTo(0, 1);
+        if($(this).hasClass('enlarged')){
+            $(this).removeClass('enlarged');
+            
+            $(this).stop().animate({width: '50%', height: '50%'}, 200,
+                                   function(){
+                                       $(this).parent().removeClass('ontop');
+                                   }); //so it gets put on bottom AFTER the shrink animation is finished
+        }else{
+            $(this).addClass('enlarged')
+            $(this).parent().addClass('ontop');
+            $(this).stop().animate({width: '100%', height: '100%'}, 200 );
+        }
+    });
+	
+});</script>
 
 
 
