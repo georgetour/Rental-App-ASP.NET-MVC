@@ -21,6 +21,18 @@
 	
 		font-size:1.8em;
 	}
+	
+	pre {
+		height: auto;
+		
+		padding:20px;
+		overflow: auto;
+		background-color: #eeeeee;
+		word-break: normal !important;
+		word-wrap: normal !important;
+		white-space: pre !important;
+
+	}
 
 
 </style>
@@ -2195,7 +2207,7 @@ namespace Vidly.Models
         &lt;div class="col-md-10">
             @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
         &lt;/div>
-    &lt;/div><pre>
+    &lt;/div></pre>
 
 	
 	<p>After we added the the field we want then in AccountViewModel:</p>
@@ -2220,8 +2232,97 @@ and find the Register() Action
                     Email = model.Email,
                     DrivingLicense = model.DrivingLicense
 
-                };</pre>
+                }; </pre>
 
+				
+<h2>OAth enable Social Logins</h2>
+<p>OAth is an authentication protocol which stands for open authorization.</p>
+<p>First we need to register our application to create some kind of partnership.</p>
+<p>The app will give us an API key and a secret like a password. To prevent malicious user we use https so
+the data between these parties will be encrypted. The user will assign the app to access information.</p>
+<p>Facebook or whatever knows the address of our app it will redirect back to our app and we will have an authorization token.
+This authorization token tells our app that facebook or whatever could authenticate this user.
+
+</p>
+<p>ASP.NET MVC uses asp.net.identity as we saw and it's very easy to use social logins.</p>
+
+<h3>To use Social Logins you must:</h3>
+<ol>
+<li>Enable SSL
+<p>To enable ssl select the project properties window by pressing F4 in solution explorer.</p>
+<img class="small-image" src="images/enable_ssl.jpg"> 
+<p>Then copy the SSL url and go to properties.</p>
+<img class="small-image" src="images/project_properties.jpg">
+<p>Then we replace the project url with the address we copied.</p>
+<img class="small-image" src="images/project_url.jpg">
+<p>Then we proceed to all our steps to have a dummy certificate. Live server will need a real certificate.</p>
+<h3>Don't allow access to http</h3>
+<p>Go to FilterConfig and we will add another filter.</p>
+<pre>    public class FilterConfig
+    {
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new HandleErrorAttribute());
+            filters.Add(new AuthorizeAttribute());
+            filters.Add(new RequireHttpsAttribute());
+        }
+    }</pre>
+	
+	<a href="https://docs.microsoft.com/en-us/aspnet/mvc/overview/security/create-an-aspnet-mvc-5-app-with-facebook-and-google-oauth2-and-openid-sign-on">Register Facebok,etc with OAth</a><br>
+	<a href="https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-2.1&tabs=aspnetcore2x">Google external login setup in ASP.NET </a>
+</li>
+<li>Register our app with Facebook,gmail,etc
+<p>Finally after we had followed the instructions in link at Startup.Auth we uncomment what external app
+we will use for sign in pass the keys and the new sign in option will appear in log in page which we can change the View as we want.
+</p>
+<p>Also <strong>If we get an error EntityValidationErrors  </strong> it's because the ExternalLoginConfirmation.cshtml in our View must be the same as Register.cshtml in View and in AccountViewModel. </p>
+<img class="small-image" src="images/register_with_external_account_error.jpg">
+<br>
+<pre>    public class ExternalLoginConfirmationViewModel
+    {
+        [Required]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
+    }</pre>
+<p>Of course we need to add it in our controller.</p>
+<pre>        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Manage");
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Get the information about the user from the external login provider
+                var info = await AuthenticationManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    return View("ExternalLoginFailure");
+                }
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    DrivingLicense = model.DrivingLicense
+                };</pre>
+				<p>In our SQL server except from user we will see in AspNetUserLogins </p>
+				<img class="small-image" src="images/asp.net_user_logins.jpg">
+</li>
+</ol>	
+
+			
+				
+				
+				
+				
 </section>
 
 
