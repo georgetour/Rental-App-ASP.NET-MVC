@@ -23,6 +23,7 @@ namespace Vidly.Controllers.Api
         }
 
         //GET /api/customers /api/customers
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IEnumerable<CustomerDto>GetCustomers()
         {
             return _context.Customers
@@ -32,6 +33,7 @@ namespace Vidly.Controllers.Api
         }
 
         //single customer /api/customers
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult GetCustomer(int id)
         {
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
@@ -46,6 +48,7 @@ namespace Vidly.Controllers.Api
 
         //create customer /api/customers
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult CreateCustomer(CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
@@ -63,6 +66,7 @@ namespace Vidly.Controllers.Api
 
         //update customer api/customers/1
         [HttpPut]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public void UpdateCustomer(int id, CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace Vidly.Controllers.Api
 
         //delete customer api/customers/1
         [HttpDelete]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public void DeleteCustomer(int id)
         {
             //Get customer from database

@@ -1,7 +1,7 @@
 ﻿@model List<Vidly.Models.Movie>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Movies";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -40,7 +40,7 @@
                     {
                         data:"name",
                         render: function (data, type, movie) {
-                            return movie.name;
+                            return "<a href='/movies/edit/" + movie.id + "'>" + movie.name + "</a>";
                         }
                     },
                     {

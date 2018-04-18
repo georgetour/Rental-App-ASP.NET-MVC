@@ -13,3 +13,13 @@ Build an API for crud operations for movies
 - Adding ok, Updating ok , Deleting a movie ok
 
 Be careful for the error we will get 
+
+18-Apr-2018
+Add phone to register form required and limit it to 50 characters ok 
+Apply the changes to other registration form which is called by external providers ok
+
+
+Limit Movie management to storemanagers to our API controller ok
+Limit view of customers to storemanagers only and not available to public ok
+Take all classes from AccountVieModel and make them seperate
+Same for IdentityModels

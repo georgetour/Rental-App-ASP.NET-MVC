@@ -25,8 +25,9 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
-        
+
         // GET: Customers
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Index()
         {
            
