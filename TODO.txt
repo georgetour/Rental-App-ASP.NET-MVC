@@ -21,5 +21,8 @@ Apply the changes to other registration form which is called by external provide
 
 Limit Movie management to storemanagers to our API controller ok
 Limit view of customers to storemanagers only and not available to public ok
-Take all classes from AccountVieModel and make them seperate
+Take all classes from AccountVieModel and make them seperate ok
 Same for IdentityModels
+
+TODO 
+Show customers in bar only to storemanagers
