@@ -2328,11 +2328,180 @@ we will use for sign in pass the keys and the new sign in option will appear in 
 
 
 
+<section>
+<h1>Performance optimization</h1>
+<blockquote>"Premature optimization is the root of all evils."<br> <small>Donald Nkuth - Computer scientist and professor at Stanford University</small></blockquote>
+
+<p>Don't sacrifice maintanability of your code for performance optimization. Optimize only when you need to.</p>
+<p>We  can't have all performance problems caused since they can be any. In web apps most follow the three-tier architecture.</p>
+
+<h2>Three-tier architecture</h2>
+<ol>
+<li>Data - SQL Server(where database and queries reside)</li>
+<li>Application - IIS(where the application is hosted)</li>
+<li>Client - Browser(front end of the application running in the browser)</li>
+
+
+</ol>
+
+<p>Most performance bottlenecks are in the data tier. So if we optimize that tier we will improve the general performance and see the difference..</p>
+
+<h3>General rules by Mosh Hamedani(a high level developer)</h3>
+
+<ol>
+<li><strong>Do not sacrifice  maintanability of your code to premature optimization</strong></li>
+<li><strong>Be realistic and think like an "engineer" not a computer</strong></li>
+<li><strong>Be pragmatic and ensure your efforts have observable results and give value</strong></li>
+</ol>
+
+
+<h3>Schema Issues</h3>
+<ol>
+<li>Primary keys</li>
+<li>Relationships</li>
+<li>Indexes</li>
+</ol>
+
+<p>When we use Entity framework code first migrations they get automatically primary key and indexes. </p>
+
+<p>Also there is an implementation pattern called EAV Entity-Attribute-Value. Instead of having concrete tables like
+movies, customers, etc the database has only a few tables called entities, attributes and values. This approach make you write huge queries. This also means performance problems.</p>
+
+<h3>Queries issues<h3>
+<p>Queries must be simple and optimized. If a query is too complex we should write a stored procedure.</p>
+
+<h4>Use execution Plan in SQL Server</h4>
+<p>SQL server has a procedure that you can check what queries are more heavier and have heavier load.</p>
+
+<h4>Create a "read" database</h4>
+<p>Since we read data than changing them in database we can have a different database that we read data from it.</p>
+
+<h4>Caching</h4>
+
+
+</section>
+
+
+<section>
+<h1>Glimpse a tool for Performance profiling</h1>
+<p>This is a tool that we can run diagnostics tests and have performance profiling. To install it in our package manager console :</p>
+<pre>PM> install-package glimpse.mvc5</pre>
+<p>Then:</p>
+<pre>PM> install-package glimpse.ef6</pre>
+<p>At our localhost we type glimpse.axd at the end to enable but this only can be seen locally for security reasons.
+In glimpse documentation  we can see how to make it work in a production application.
+</p>
+
+<p>Here how it looks and we can see some info by hovering:</p>
+
+<img class="small-image" src="images/glimspe.jpg">
+
+<p>By clicking the g button we can see SQL queries, AJAX requests etc.</p>
+
+<p>If we use lazy loading instead of eager we will see in glimpse that the queries will be increased. So this comes to N + 1 issue because of lazy loading.</p>
+<strong>Avoid lazy loading at all times in web apps.</strong>
+
+<p>So with glimpse we can see queries run by entity framework and many other diagnostics.</p>
+</section>
+
+<section>
+<h1>Caching</h1>
+<p>Caching is one technique that can improve speed of end user's experience.</p>
+
+<p>To enable caching in a page we use [OutputCache] like we we use [Authorize(Duration = 50)]. Duration is in seconds.</p>
+
+<pre>        [OutputCache(Duration = 50)]
+        public ActionResult Index()
+        {
+            return View();
+        }</pre>
+<p>We can cache it on the client or on the server. If the view is specific to a user on the client else on the server.</p>
+<h2>Caching location</h2>
+<pre>        [OutputCache(Duration = 50,Location = System.Web.UI.OutputCacheLocation.Server )]
+        public ActionResult Index()
+        {
+            return View();
+        }</pre>
+		
+<p>Also if the action takes one or more parameters and the output changes based on the values of 
+these parameters we can cache its parameter. For example if the View changes according to a parameter called genre:</p>
+
+<pre>        [OutputCache(Duration = 50,Location = OutputCacheLocation.Server,VaryByParam ="genre" )]
+        public ActionResult Index()
+        {
+            return View();
+        }</pre>		
+		
+<p>For any parameters we use asterisk before</p>
+
+<p><strong>Do not assume a page will be heavy and start using caching everywhere. Always think user experience first and what 
+they will see.
+</strong></p>
+
+<h2>Disabling caching</h2>
+<p>Sometimes caching can be bad and users don't see the updates or changes as supposed to so we must to disable it.</p>		
+<pre>        [OutputCache(Duration = 0,VaryByParam = = "*",NoStore =true)]
+        public ActionResult Index()
+        {
+            return View();
+        }
+</pre>
+
+
+<h2>Data caching</h2>
+<p>Sometimes we want to cache a Data and not Html. <strong>Again use it only if you have something that doesn't changes often and ONLY if you have serious performance issues.</strong></p>
+
+<p>To use it we need to add reference to the assembly and then add the namespace.</p>
+
+<img class="small-image" src="images/adding_system.runtime.caching.jpg" >
+
+<p>Every item we store in cache we use key to access it. If is null retrieve it from database else from cache.</p>
+
+
+<pre>        public ActionResult Index()
+        {
+            if (MemoryCache.Default["Genres"]== null)
+            {
+                MemoryCache.Default["Genres"] = _context.Genres.ToList();
+            }
+            var genres = MemoryCache.Default["Genres"] as IEnumerable<Genre>;
+
+            return View();
+        }</pre>
+
+</section>
+
+<section>
+<h1>Async</h1>
+<p>Also we shouldn't use it so much since a lot of people think that will increase performance of an application.</p>
+<p>When we want something from the database the user sends a request a thread runs then the query. Every web server 
+has limited memory and threads it can handle. If we run out of memory and threads we must use async and await.
+So this is used so we can serve more users if we see we run out of memory and threads.
+</p>
+<img class="small-image" src="images/threads.jpg">
+<p>This improves scalability and not performance but still limited to hardware. It will make a difference if used with SQL cLUSTER,NOSQL , SQL Azure</p>
+
+
+</section>
+
+<section>
+<h1>Release builds</h1>
+<p>We have different builds and the Debug build has some extra assemblies for debuging etc. The release build is lighter.</p>
+
+<img class="small-image" src="images/release_builds.jpg">
+</section>
 
 
 
 
- <script src="assets/jquery-3.3.1.min.js"><br></script>
+
+
+
+
+
+
+
+ <script src="assets/jquery-3.3.1.min.js"></script>
 <script>$( document ).ready(function() {
 	
 	$('.small-image').click(function() {
