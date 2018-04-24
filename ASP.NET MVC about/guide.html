@@ -2504,7 +2504,7 @@ The more users we have the more memory we will use. Session kills scalability of
 
 
 
-<!--Glimpsh-->
+<!--Glimpse-->
 <section>
 <h1>Glimpse a tool for Performance profiling</h1>
 <p>This is a tool that we can run diagnostics tests and have performance profiling. To install it in our package manager console :</p>
@@ -2526,8 +2526,57 @@ In glimpse documentation  we can see how to make it work in a production applica
 
 <p>So with glimpse we can see queries run by entity framework and many other diagnostics.</p>
 </section>
+<!--End Glimpse-->
 
 
+
+<!--Building End to end feature-->
+<section>
+<h1>Building an End-to-end feature</h1>
+<p>By end to end we mean from one point to the other. For example the admin or shopmanager has a form that 
+will fill so he knows what the customer rent and track the rentals.
+</p>
+
+<h2>Steps for building correct software</h2>
+<ol>
+<li><h3>Understand what problem you need to solve</h3>
+<p>Ask customer or client about details and this use case</p>
+</li>
+
+<li><h3>We need Front-end - Back-end</h3>
+<p>It doesn't matter what you build first. It's personal choice.</p>
+</li>
+
+<li><h3>Input - Output</h3>
+<ul>
+<li>Use case: New rental</li>
+<li>Input: Customer and Movies</li>
+<li>Output: in this example we don't have an output but for example in an eshop we might gave the order or transaction Id to customer</li>
+</ul>
+
+</li>
+
+<li><h3>Focus on the big picture</h3>
+<p>Focus on the big picture the general idea and then in details.</p>
+</li>
+
+<li><h3>Represent a simple graphic for the application(UML)</h3>
+<p>UML stands for Unified Model Language that is a very simple graphic explanation of our application so anyones understands.</p>
+</li>
+
+<li><h3>How is going to work</h3>
+<p>In our case we need an Action that our front end is going to call later on. 
+This action can be in the MVC controller or an API controller. If we want to return markup add it to MVC Controller. 
+If we want to return data then go for an API controller(by using the API  we can get the data and use them wherever we want).  
+</p>
+<p>In our case when the form will be submitted we will inform the user that the rental was added.</p>
+</li>
+
+
+</ol>
+
+
+</section>
 
 
 
