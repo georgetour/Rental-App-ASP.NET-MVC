@@ -1,0 +1,2625 @@
+<html>
+<head><meta charset="UTF-8">
+<link href="assets/prism.css" rel="stylesheet">
+<style>body{
+		font-size:1.5em; 
+		padding:20px;
+	}
+	
+	section{
+		border:1px solid black; 
+		padding:10px;margin-bottom :20px;
+	}
+	
+	.small-image{	
+		width:50%;
+	}
+	
+	
+	
+	h1{
+	
+		font-size:1.8em;
+	}
+	
+	
+
+
+</style>
+</head>
+<body>
+<section>
+
+<h1>ASP.NET MVC</h1>
+<p>MVC is an architectural pattern that stands for Model View Controller. Designed in 1970s and was widely adopted in web. It is used 
+by many frameworks like Laravel, RubyOnRails,ASP.NET MVC etc.
+ </p>
+ 
+ <ul>
+ <li><h2>Model</h2>Application data and behaviour in terms of its problem domain independent of the UI. In model we have our classes.
+ These classes have properties and methods that purely represent the application state and rules that have nothing to do with the UI.(Plain CLR objects or POCOs)</li>
+ <li><h2>View</h2>The HTML that we display to the user</li>
+ <li><h2>Controller</h2> Responsible for handling the HTTP request(for example if our app is hosted in vidly.com and we want to view vidly.com/movies a controller will
+ be selected to handle this request)<br>***View <- Controller -> Model*** So the controller is responsible for connecting the Model with the View.</li>
+ <li><h2>Router</h2>This is not mentioned in MVC letters but it's always there. Selecting the right controller is the responsibility of the router. The router 
+ based on some rules knows what controller must be used according to the request. In ASP.NET MVC methods of a controller are called actions</li>
+ </ul>
+<p>With this architecture every component is responsible for doing something and seperating it for clearer code and maintanability.</p>
+</section>
+
+<section>
+<h1>ASP.NET MVC structure</h1>
+
+ <ul>
+ <li><h2>App_Data</h2>Database files will be stored here<strong>(To show mdf files in App_Data)</strong><br>
+ <img class="small-image" src="images/mdf_files_app_data.jpg">
+ </li>
+ <li><h2>App_Start</h2>Includes some classes for when the application is started
+	<ol>
+		<li><h3>Routeconfig.cs</h3><p>This is the configuration or our routing rules.</p>
+		</p><img class="small-image" src="images/route_config.jpg">
+		<p>So if our url matches this patterns we have: First part is the name of the controller,second part is the name of the action, third part is an ID
+		we can pass to that action. With this rule if we send a request to movies/popular in runtime we have a MoviesController and a Popular() method.
+		Another example is with /movies/edit/1 we get MoviesController and its method Edit(int id) with id 1.
+		</p>
+		<p>Also we can see we have some defaults values in our picture. So if the request doesn't match the url pattern we will get the defaults.
+		Similarly if we have the controller but not the action it will be handled by the Index action. If we go to /movies since we don't have any actions
+		it will be handled by MoviesController.Index().
+		</p>
+		<p>Id is an optional parameter. Because not every action needs an id.</p>
+		</li>
+		
+		<li><h3>Bundleconfig.cs</h3>
+		<p>Here we define various bundles for client side assets like scripts css etc.</p>
+		</li>
+	</ol>
+ </li>
+ <li><h2>Content</h2>
+ <p>Here we put our css files, images and every other client assets.</p>
+ 
+ <li><h2>Controllers</h2>
+ <p>The folder with our controllers which in our first created applcation we see 3 default controllers.</p>
+ </li>
+ 
+<li><h2>fonts</h2>
+ <p>Fonts(we should move them to Content).</p>
+ </li>
+ 
+ <li><h2>Models</h2>
+ <p>All our domain classes are here.</p>
+ </li>
+ 
+<li><h2>Scripts</h2>
+ <p>Javascript files.</p>
+</li>
+ 
+<li><h2>Views</h2>
+ <p>We have our views which is the V in MVC. In there we have folders named after controllers(without the ending controllers) in our application.
+ By convention when we use a view ASP.NET will look for the same name as the controller.
+ </p><img class="small-image" src="images/view.jpg">
+ <p>We also have a folder called Shared which includes the views that can be viewed by different controllers.</p>
+</li>
+
+<li><h2>favicon.ico</h2>
+ <p>The icon diplayed for our app in browser.</p>
+</li>
+
+<li><h2>Global.asax</h2>
+ <p>Traditional file that has been in ASP.NET which is a class that provides hooks for various events in the applications lifecycle.
+ When the application is started Global.asax will start. We will have some things registered like Routes.
+ </p>
+</li>
+
+ <li><h2>packages.config</h2>
+ <p>It's used by Nuget package manager(like npm bower etc). Instead of going to every site downloading and installing a package we have them all in one place 
+ in Visual Studio.
+ </p>
+</li>
+ 
+  <li><h2>Startup.cs</h2>
+ <p>This the new approach microsft takes for ASP.NET core which will replace Global.asax when the application starts.
+ </p>
+</li>
+ 
+   <li><h2>Web.config</h2>
+ <p>This is an .xml file which has our configuration for our application. Mostly we use connectionStrings(database connection info) and appSettings(our configuration
+ settings for our app)
+ </p>
+</li>
+ 
+ </ul>
+
+
+</section>
+
+<section>
+<h1>MVC in Action</h1>
+<p>First we create a class in Model with the properties we want.</p>
+<p>Let's say we want to have a page that we randomly pick a movie and render its details. If the page will be /movies/random we need to create a controller
+called MoviesController with an action called random. So an action is a method responsible for handling a request.
+</p>
+<p>To create the controller in solution explorer right click in controller and then add controller. There we have some templates that will auto generate 
+some code for us. Then we create an empty one. By default we have an Index action which returns the View. We have to create what methods/actions we will have.
+ </p>
+ <p>We have to say to this newlly created controller that we will use the models.
+</p><img class="small-image" src="images/using_models_in_controller.jpg">
+ </p>
+ <p>Then it created a folder same name with our controller and we must add the View. As we see it returns the View which we should create in our folder Movies that will be called Random.
+ </p><img class="small-image" src="images/add_view.jpg">
+ </p>
+ <p>There we can use a template and choose as a <strong>partial view</strong> which is like a widget which can be used on different views.
+ </p><img class="small-image" src="images/partial_view.jpg">
+ </p>
+<p>Also we have to select the layout since we want all our pages look similar in our app. By default our mvc project has a layout to choose.
+</p><img class="small-image" src="images/layout_template.jpg">
+
+</p>
+
+<h2>.cshtml(the view we created)</h2>
+<ol>
+<li><h3>ViewBag.Title </h3><p>This is basically the title for the page shown in the browser</p></li>
+<li><h3>Layout</h3><p>The layout used for this view.</p></li>
+
+</ol>
+<p>Back at our MoviesController we pass the parameter we want to show in our View method.
+</p><img class="small-image" src="images/return_view.jpg">
+</p>
+
+<p>When we want to write C#  and have it shown in our View we start with @. Then we write Model. Every View has 
+this property which give us access to the Model we passed to it and the controller. If we type . at the Model we will see
+that the type of this model is dynamic.
+</p><img class="small-image" src="images/dynamic.jpg">
+</p>
+<p>On top of the file we need to use a directive to specify the type of the Model for this View.
+</p><img class="small-image" src="images/fully_qualified_name.jpg">
+</p>
+<p>After that we can see that we can access the Name property for Model and we can put it in our html.</p>
+</section>
+
+<section>
+<h1>ASP.NET MVC Fundamentals</h1>
+<ul>
+
+<li>
+<h2>Action Results</h2>
+<p>In our controllers before our methods name we have ActionResult type.</p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            var movie = new Movie() {Name ="Shrek" };
+            return View(movie);
+        }</code></pre>
+<p>ActionResult is the base class of all action resolves in ASP.NET MVC. Depending on what an action does it would return an instance of one the class that derives from.</p>		
+</li>
+<ol>
+<li>
+<h3>return View() in ActionResult</h3>
+<p>This method allows us to quickly create a view result and derives from Controller class. Another way is :</p>
+<pre><code class="language-javascript">return new ViewResult();</code></pre>
+
+</li>
+
+<li>
+<h3>ViewResult</h3>
+<p>We can set the type to ViewResult instead of ActionResult. This is good for unit testing. Sometimes in an action we may have different execution paths and return different action results.</p>
+</li>
+
+<li>
+<h3>PartialViewResult</h3>
+<p>Return a PartialView().</p>
+</li>
+
+<li>
+<h3>ContentResult</h3>
+<p>Return simple text Content().</p>
+<pre><code class="language-javascript">   
+        public ActionResult Random()
+        {
+            
+            return Content("Hello World");
+        }</code></pre>
+</li>
+
+<li>
+<h3>RedirectResult</h3>
+<p>Redirect user to url Redirect().</p>
+</li>
+
+<li>
+<h3>RedirectToRouteResult</h3>
+<p>RedirectToAction() instead of url. First the name of the action and then the name of the controller.</p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            return RedirectToAction("Index","Home");
+        }</code></pre>
+		<p>If we want to have new query strings we will have to pass a third argument.
+		</p><img class="small-image" src="images/query_strings.jpg">
+</li>
+
+<li>
+<h3>JsonResult</h3>
+<p>Return a serialized object file Json().</p>
+</li>
+
+<li>
+<h3>FileResult</h3>
+<p>Return a  file File().</p>
+</li>
+
+<li>
+<h3>HttpNotFoundResult</h3>
+<p>Return a not found error HttpNotFound().</p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            return HttpNotFound();
+        }</code></pre>
+</li>
+
+<li>
+<h3>EmptyResult</h3>
+<p>Return something empty like void.</p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            return new EmptyResult();
+        }</code></pre>
+</li>
+</ol>
+
+<li>
+<h2>Action parameters</h2>
+<p>The input for our actions. The parameter resources :</p>
+
+<ol>
+<li><p>In the URL : /movies/edit/1 (if the paramater is not named id but something else since in our default we must have it as id we will get an error)</p>
+</p><img class="small-image" src="images/parameter_resource_url.jpg">
+</li>
+<li><p>In the query string : /movies/edit?id=2</p>
+</p><img class="small-image" src="images/parameter_resource_query_string.jpg">
+</li>
+<li>In the form data : id=1</li>
+
+<li><p>Optional parameter</p>
+<pre><code class="language-javascript">        public ActionResult Index(int? pageIndex,string sortBy)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            if (String.IsNullOrWhiteSpace(sortBy))
+            {
+                sortBy = "Name";
+            }
+            return Content(String.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
+
+        }</code></pre>
+</li>
+
+</ol>
+
+<p>If we don't have the parameter we will get an error.
+</p><img class="small-image" src="images/no_parameter.jpg">
+</p>
+</li>
+
+
+<li>
+<h2>Convention-based Routing(custom Routing)</h2>
+<p>We might need in our application more parameters than id like : /movies/released/2015/04. You have 
+to define the Routes from the more specific to the most generic otherwise the more generic will be applied to the url.
+The most common overload method is the one with three parameters(name,URL, defaults) and the name must be unique.
+</p>
+<pre><code class="language-javascript">            routes.MapRoute(
+                "MoviesByReleaseDate",
+                "movies/released/{year/{month}}",
+                new {controller = "Movies",action="ByReleaseDate"});</code></pre>
+<p>Next we create the action(if we type mvcaction4 and tab we can create it fast). If the url doesn't matches the RouteConfig patterns we will get an error.
+</p><img class="small-image" src="images/custom_routing.jpg">
+</p>
+<p>Regular Expression(if the url doesn't matches the expression we will get an error)</p>
+<pre><code class="language-javascript">            routes.MapRoute(
+                "MoviesByReleaseDate",
+                "movies/released/{year}/{month}",
+                new{controller = "Movies",action="ByReleaseDate"},
+                new {year = @"\d{4}", month = @"\d{2}"}
+                );</code></pre>
+<p>If we want to limit the route parameters: </p>
+<pre><code class="language-javascript">            routes.MapRoute(
+                "MoviesByReleaseDate",
+                "movies/released/{year}/{month}",
+                new{controller = "Movies",action="ByReleaseDate"},
+                new {year = @"2015||2016}", month = @"\d{2}"}
+                );</code></pre>
+</li>
+
+<li><h2>Attribute Routing</h2>
+<p>This is a cleaner way of creating custom routes so we can avoid making RouteConfig a mess and avoiding errors if we rename the action.</p>
+<p>First we enable it:</p>
+<pre><code class="language-javascript">routes.MapMvcAttributeRoutes();</code></pre>
+<p>And the way of not polluting our RouteConfig : </p>
+<pre><code class="language-javascript">        [Route("movies/released/{year}/{month:regex(\\d{2})}")]
+        public ActionResult ByReleaseDate(int year,byte month)
+        {
+            return Content(year +"/" +month);
+        }</code></pre>
+		<h3>Constraints</h3>
+		<ol>
+		<li>range</li>
+		<li>min</li>
+		<li>max</li>
+		<li>minlength</li>
+		<li>maxlength</li>
+		<li>int</li>
+		<li>float</li>
+		<li>guid</li>
+		
+		</ol>
+</li>
+
+<li><h2>Passing Data to Views</h2>
+<p>We have two extra ways to return a view instead of only passing the parameter to View method.</p>
+<h3>ViewData</h3>
+<p>At our controller : </p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            var movie = new Movie() { Name = "Shrek" };
+
+            ViewData["Movie"] = movie;
+
+            return View();
+        }</code></pre>
+		
+<p>And at our Model we need to cast the ViewData with the type(this approach is ugly and shouldn't be used).</p>
+<pre><code class="language-javascript">@using Vidly.Models
+@model Vidly.Models.Movie
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@( ((Movie)ViewData["Movie"]).Name)&lt;/h2&gt;
+</code></pre>
+</li>
+
+<li>
+<p>Microsoft tried to fix it with ViewBag that instead of magic string it has a magic property. </p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            var movie = new Movie() { Name = "Shrek" };
+
+            ViewBag.Movie = movie;
+
+            return View();
+        }</code></pre>
+<p>And at our View(if we decide to change it we should remember to change it at View also): </p>		
+<pre><code class="language-javascript">@using Vidly.Models
+@model Vidly.Models.Movie
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@ViewBag.Movie&lt;/h2></code></pre>
+<h3>We should not use ViewData or ViewBag.</h3>
+</li>
+
+
+<li><h2>View Model</h2>
+<p>A view model is a model specifically built for a view. It includes any data and rules specific to that view. For example if we
+we didn't have the relation tou our model but we needed to show them in a view. </p>
+<p>First we create a folder that will have our View Models. Then a class that will have the objects we want to relate.</p>
+</p><img class="small-image" src="images/view_models.jpg">
+<p>Then at our controller a viewModel :</p>
+<pre><code class="language-javascript">        public ActionResult Random()
+        {
+            var movie = new Movie() { Name = "Shrek" };
+            var customers = new List&lt;Customer>
+            {
+                new Customer() {Name = "Customer1" },
+                new Customer() {Name = "Customer2" }
+            };
+
+            var viewModel = new RandomMovieViewModel
+            {
+                Movie = movie,
+                Customers = customers
+            };
+
+            return View(viewModel);
+        }</code></pre>
+<p>And at our Model : </p>
+<pre><code class="language-javascript">@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2></code></pre>
+
+</li>
+
+<li><h2>Razor Syntax - Razor Views</h2>
+<p>We have seen that we simply add an @ symbol to write C# code in our View. We can alos write a foreach loop 
+to show all data we want in our List. In the foreach block we can continue to write c# or we can write HTML.
+</p>
+<pre><code class="language-javascript">@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2>
+
+&lt;ul>
+    @foreach (var customer in Model.Customers)
+    {
+        &lt;li>@customer.Name&lt;/li>
+    }
+&lt;/ul></code></pre>
+
+<p>We can also write anything we want like ifs etc.</p>
+
+<pre><code class="language-javascript">@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2>
+
+@if (Model.Customers.Count == 0)
+{
+    &lt;p>No one has rented this movei before.&lt;/p>
+}</code></pre>
+
+<p>Using if and else : </p>
+<pre><code class="language-javascript">@model Vidly.ViewModels.RandomMovieViewModel
+
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>@Model.Movie.Name&lt;/h2>
+
+@if (Model.Customers.Count == 0)
+{
+    &lt;p>No one has rented this movei before.&lt;/p>
+}
+else
+{
+    &lt;ul>
+        @foreach (var customer in Model.Customers)
+        {
+            &lt;li>@customer.Name&lt/li>
+        }
+    &lt;/ul>
+}</code></pre>
+
+<p><strong>Remember that type you pass in View of action result must be same in View:</strong>
+</p><img class="small-image" src="images/type_controller_model.jpg">
+
+<p>Rendering something dynamically : </p>
+<pre><code class="language-javascript">@{ 
+    var className = Model.Customers.Count > 5 ? "popular" : null;
+}
+
+&lt;h2 class="@className">@Model.Movie.Name&lt/h2></code></pre>
+
+<p>And to comment with razor syntax</p>
+<pre><code class="language-javascript">@*
+    This is a comment
+*@</code></pre>
+</li>
+
+<li>
+<h2>Partial Views</h2>
+<p>It's something that you can use it in different smaller areas like widgets etc or the navbar can be be in a partial view.
+To create a partial view right click in views then add View. By convention we use an underscore for a partial view.
+</p>
+</p><img class="small-image" src="images/partial_views.jpg">
+<p>Then to render it where we want we call the Html property of our Views.</p>
+<pre><code class="language-javascript">&lt;body>
+    @Html.Partial("_NavBar")</code></pre>
+</li>
+
+<li><h3>ActionLink()</h3>
+<p>ActionLink is used to define links for example in our navbar and has 9 overloads. In the below code we have
+name of link, actionName, controllerName . </p>
+<pre><code class="language-javascript">                &lt;li>@Html.ActionLink("Home", "Index", "Home")&lt;/li></code></pre>
+
+
+
+</li>
+
+<li><h3>Url.Action()</h3>
+<p>It provides only the Url potion and not the whole href like ActionLink(). </p>
+<pre><code class="language-javascript">&ltul>
+    @foreach (var customer in Model.Customers)
+    {
+        &ltli>&lta href="@Url.Action("Details")/@customer.Id">@customer.Name&lt/a>&lt/li>
+    }
+&lt/ul></code></pre>
+
+
+
+</li>
+
+</ul>
+
+</section>
+
+<section>
+<h1>Starting with database</h1>
+<p>First in our package manager console we enable migrations.</p>
+<p>Second we create our first migration with add-migration and name of migration.</p>
+<p>Third we must create our tables in ApplicationContext as Dbset. Those changes are done in <strong>IdentityModel</strong>.</p>
+<pre><code class="language-javascript">    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    {
+        public DbSet<Customer> Customers { get; set; }
+
+        public ApplicationDbContext()
+            : base("DefaultConnection", throwIfV1Schema: false)
+        {
+        }
+
+        public static ApplicationDbContext Create()
+        {
+            return new ApplicationDbContext();
+        }
+    }</code></pre>
+
+<p>Forth we must generate our database by running the command update-database. We will have an mdf file created in our App-data :</p>
+</p><img class="small-image" src="images/generating_database.jpg">
+</section>
+
+<section>
+<h1>Seeding the database</h1>
+<p>To seed the database you run an empty migration which will create an Up and Down method. 
+Then in Up method you will use the SQL method to query the database and give data.
+</p>
+<p>After writing the query you type update-database in our package manager console. </p>
+
+</section>
+
+<section>
+<h1>Overriding Conventions</h1>
+<h2>Data Annotations</h2>
+<p>If you want to change some column's properties you must use System.ComponentModel.DataAnnotations.
+</p>
+<p>Then you put in squared brackets the change you want :</p>
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace Vidly.Models
+{
+    public class Customer
+    {
+        public int Id { get; set; }
+        [Required]
+        public string Name { get; set; }
+        public bool IsSubcribed { get; set; }
+        public MembershipType MembershipType { get; set; }
+        public byte MembershipTypeId { get; set; }
+
+    }
+}</code></pre>
+<p>Also we can use Fluent API as in the html file in here :<br><a href="https://github.com/georgetour/Entity-Framework/blob/master/Chapter%205%20Overriding%20Conventions/README.html">https://github.com/georgetour/Entity-Framework/blob/master/Chapter%205%20Overriding%20Conventions/README.html</a> </p>
+</section>
+
+<section>
+<h1>Querying Objects</h1>
+<p>To query the database with Entity framework first we create an ApplicationDbContext and initialize it in
+the constructor since it's a disposable object we must dispose it :</p>
+
+<h2>The Controller :</h2>
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Vidly.Models;
+using Vidly.ViewModels;
+
+namespace Vidly.Controllers
+{
+    public class CustomersController : Controller
+    {
+
+        private ApplicationDbContext _context;
+
+
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        
+        // GET: Customers
+        public ActionResult Index()
+        {
+            var customers = _context.Customers.ToList();
+           
+            return View(customers);
+        }
+
+
+        //Details for one customer 
+        public ActionResult Details(int id)
+        {
+
+            var customerDetails = _context.Customers.SingleOrDefault(c => c.Id== id);
+
+            if (customerDetails == null)
+               return HttpNotFound();
+
+            return View(customerDetails);
+        }
+
+    }
+}
+
+
+</code></pre>
+
+<h2>The View</h2>
+<pre><code class="language-javascript">@model IEnumerable&lt;Vidly.Models.Customer&gt;
+
+@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>Customers</h2>
+
+
+    @if (!Model.Any())
+    {
+        &lt;p>Customer list is empty &gt;/p>
+    } else {
+        &lt;ul>
+           @foreach (var customer in Model)
+            {
+                &lt;li>&lt;a href="@Url.Action("Details")/@customer.Id">@customer.Name&lt;/a>&lt;/li>
+            }
+       
+        &lt;/ul>
+    }
+</code></pre>
+
+</section>
+
+<section>
+<h1>Eager Loading</h1>
+<p>If we try to load anything related objects we will get an error since Entity Framework loads only the main object.</p>
+<p>So we have to load them all together and then show them in View by using Include method and System.Data.Entity :</p>
+
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Vidly.Models;
+using Vidly.ViewModels;
+
+namespace Vidly.Controllers
+{
+    public class CustomersController : Controller
+    {
+
+        private ApplicationDbContext _context;
+
+
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        
+        // GET: Customers
+        public ActionResult Index()
+        {
+            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
+           
+            return View(customers);
+        }
+
+
+        //Details for one customer 
+        public ActionResult Details(int id)
+        {
+
+            var customerDetails = _context.Customers.SingleOrDefault(c => c.Id== id);
+
+            if (customerDetails == null)
+               return HttpNotFound();
+
+            return View(customerDetails);
+        }
+
+    }
+}
+
+
+</code></pre>
+
+</section>
+
+<section>
+<h1>Forms</h1>
+<p>To have a form first we need an Action that we will show the form in View(if you type mvcaction4 tab tab you will see a new Action easily created in Visual Studio).</p>
+<p>After we have created the action in our View for the form :</p>
+
+<ol>
+<li>
+<h3>With Html.BeginForm we pass the action this form will target when is submitted and the Controller. We have to write using at the begin so the form will be closed :</h3>
+<pre><code class="language-javascript">@using (Html.BeginForm("Create", "Customers"))
+{
+
+}</code></pre>
+</li>
+<li>
+<h3>Inside the form we can use raw html or the methods we have in @Html<strong>(by using the methods we get automatically validation according to Model)</strong>. According to what we have in our Model the form will have the
+the fields accordingly :
+</h3>
+<pre><code class="language-javascript">    public class Customer
+    {
+        public int Id { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
+        public bool IsSubcribed { get; set; }
+        public MembershipType MembershipType { get; set; }
+        public byte MembershipTypeId { get; set; }
+        public DateTime? Birthdate { get; set; }
+
+    }
+}</code></pre>
+</p><img class="small-image" src="images/form_fields_according_to_model.jpg">
+
+<pre><code class="language-javascript">@model Vidly.Models.Customer
+
+@{
+    ViewBag.Title = "NewCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+&lt;h2>New Customer&lt;/h2>
+
+@using (Html.BeginForm("Create", "Customers"))
+{
+    &lt;div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name)
+    &lt;/div>
+}</code></pre>
+
+</li>
+
+<li><h3>Add extras to form field (classes etc) :</h3>
+<p>To do this we hust add the new keyword and type what we want :</p>
+<pre><code class="language-javascript">@using (Html.BeginForm("Create", "Customers"))
+{
+    &lt;div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class ="form-control" })
+    &lt;/div>
+
+
+}
+</code></pre>
+
+<p>Though if we have a check box we have to layout differently :</p>
+
+<pre><code class="language-javascript">    &lt;div class="checkbox">
+        &lt;label>
+            @Html.CheckBoxFor(m => m.IsSubcribed, new { @type = "checkbox" })Subscribed to Newsletter
+        &lt;/label>
+    &lt;/div></code></pre>
+
+</li>
+
+<li>
+<h3>Changing display name of a label for a field :</h3>
+<p>With the above code we get the name for the label dynamically according to its Model. If we want to change
+it we have two options :
+</p>
+<pre><code class="language-javascript">namespace Vidly.Models
+{
+    public class Customer
+    {
+        public int Id { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
+        public bool IsSubcribed { get; set; }
+        public MembershipType MembershipType { get; set; }
+        public byte MembershipTypeId { get; set; }
+
+        [Display(Name = "Date of Birth")]
+        public DateTime? Birthdate { get; set; }
+
+    }
+}</code></pre>
+
+<p>Second option pure html:</p>
+<pre><code class="language-javascript">    &lt;div class="form-group">
+        &lt;label for="Birthdate">Date of Birthday&lt;/label>
+        @Html.TextBoxFor(m => m.Birthdate, new { @class = "form-control" })
+    &lt;/div>
+</code></pre>
+
+</li>
+
+<li>
+<h3>DropDown lists</h3>
+<p>First we need bring in our action what we want to show in our dropdown list:</p>
+<pre><code class="language-javascript">        public ActionResult NewCustomer()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            var viewModel = new NewCustomerViewModel
+            {
+                MembershipTypes = membershipTypes
+            };
+
+            return View(viewModel);
+        }</code></pre>
+		
+<p>We also need to create a ViewModel that will have the IEnumerable for the dropdown list.
+</p>
+
+<pre><code class="language-javascript">    public class CustomerFormViewModel
+    {
+        //list of membership types
+        public IEnumerable&lt;MembershipType&gt; MembershipTypes { get; set; }
+        public Customer Customer { get; set; }
+    }</code></pre>
+
+<p>At our View :</p>
+<pre><code class="language-javascript"><code class="language-javascript">    &lt;div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, 
+                                new SelectList(Model.MembershipTypes,"Id","Membership"),
+                                "Select membership type", 
+                                new { @class = "form-control" })
+    &lt;/div></code></code></pre>	
+<p>First we define for what this dropdown will be in our case for MembershipTypeId. Then we write new SelectList with the arguments
+what we will bing from the model the list of items, then the name of the property that holds the value of each item in this case Id,
+next argument the property for the text of each item which is Membership. After a string for the title of the list "Select membership type" and finally if we want something like classes etc.
+</p>	
+</li>
+
+<li>
+<h3>Model Binding</h3>
+<p>When our form is ready we finally need a button and the action we had in Html.BeginForm with the HttpPost attribute above.</p>
+
+<pre><code class="language-javascript">        [HttpPost]
+        public ActionResult Create(NewCustomerViewModel viewModel)
+        {
+            return View();
+        }</code></pre>
+		
+<p>MVC is smart enough to bind the action with what we passed in ass parameter.</p>		
+</li>
+
+<li><h3>Saving Data</h3>
+<p>First we use the Add method that temporarily saves our data and for the changes to be applied to database we need
+to SaveChanges().
+</p>
+<pre><code class="language-javascript">        [HttpPost]
+        public ActionResult Create(Customer customer)
+        {
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index","Customers");
+        }</code></pre>
+
+</li>
+
+<p>Finally we redirect them or create a View which will have the same name as the action like thank you it was submitted etc.</p>
+
+<li>
+<h3>Edit Form</h3>
+<p>To edit a form first we need to have an action:</p>
+<pre><code class="language-javascript">        public ActionResult Edit(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+
+            if (customer == null)
+            {
+                return HttpNotFound();
+
+            }
+            return View("CustomerForm",viewModel);
+        }</code></pre>
+		
+<p>We will bring a customer according to id passed. Then we have the ViewModel we have created which will get 
+the Customer and the mEmbershipTypes directly from context. If we don't have anything for that id return null else return
+the View CustomerForm and in it the viewModel.
+</p>
+</li>
+
+<li>
+<h3>Updating Data</h3>
+<p>We have two options. Either to use TryUpdateModel() which updates all the data. This is not suggested though for security reasons
+and if we have an option to pass arguments only that we want with strings as 3rd argument.</p>
+<h4>Wrong approach</h4>
+<pre><code class="language-javascript">
+        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (customer.Id == 0)
+                _context.Customers.Add(customer);
+            else
+            {
+                var customerInDB = _context.Customers.Single(c => c.Id == customer.Id);
+
+                TryUpdateModel(customerInDB, "", new string[] { "Name", "Email" });
+            }
+            _context.SaveChanges();
+
+            return RedirectToAction("Index","Customers");
+        }
+
+
+</code></pre>
+<h4>Correct approach</h4>
+<pre><code class="language-javascript">
+        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (customer.Id == 0)
+                _context.Customers.Add(customer);
+            else
+            {
+                var customerInDB = _context.Customers.Single(c => c.Id == customer.Id);
+
+                customerInDB.Name = customer.Name;
+                customerInDB.Birthdate = customer.Birthdate;
+                customerInDB.MembershipTypeId = customer.MembershipTypeId;
+                customerInDB.IsSubcribed = customer.IsSubcribed;
+            }
+            _context.SaveChanges();
+
+            return RedirectToAction("Index","Customers");
+        }
+
+</code></pre>
+<p>Also we have to have hidden the id: in our form:</p>
+<pre><code class="language-javascript">@Html.HiddenFor(m => m.Customer.Id)</code></pre>
+<p>Which has the id in an input but hidden.</p>
+
+</li>
+
+</ul>
+
+
+</section>
+
+<section>
+<h1>Checking if we have value and change html and validation error</h1>
+<p>To check if we have an id an change html title for example accordingly we will just add a new property in the ViewModel
+</p>
+<pre><code class="language-javascript">    public class CustomerFormViewModel
+    {
+        //list of membership types
+        public IEnumerable&lt;MembershipType&gt; MembershipTypes { get; set; }
+        public Customer Customer { get; set; }
+        public string Title
+        {
+            get
+            {
+                if (Customer != null && Customer.Id !=0)
+                {
+                    return "Edit Customer";
+                }
+                else
+                {
+                    return "New Customer";
+                }
+
+            }</code></pre>
+			
+<p>Then we will bring in our View the title.</p>
+<pre><code class="language-javascript">@Html.Model.Title</code></pre>
+
+<h2>Validation errors</h2>
+<p>Sometimes we will see an error and we will not get info about what it is. To solve this we must use try and catch.</p>
+
+<pre><code class="language-javascript">            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbEntityValidationException e) 
+            {
+
+                Console.WriteLine(e);
+            }</code></pre>
+</section>
+
+<section>
+<h1>Validation</h1>
+<p>ASP.NET MVC uses data annotations to validate data according to parameter we have and checks if the data we pass
+is valid else gives as an error.
+</p>
+<p>We can use ModelState.IsValid to check if the data we pass is valid according to the Model.</p>
+<p>To add validation we hve three steps:</p>
+<ol>
+<li>Data annotation in our entities
+<pre><code class="language-javascript">        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }</code></pre>
+</li>
+
+<li>Use ModelState.IsValid
+<pre><code class="language-javascript">        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CustomerFormViewModel
+                {
+                    Customer = customer,
+                    MembershipTypes = _context.MembershipTypes.ToList()
+                };
+                return View("CustomerForm",viewModel);
+            }
+            </code></pre>
+</li>
+
+<li>Error message to user (we add a field in our view that will show the message)
+<pre><code class="language-javascript">    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Name)
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class ="form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div></code></pre>
+
+
+</li>
+</ol>
+
+<h2>Styling validation errors and field</h2>
+<p>We can see the classes used by ASP.NET MVC in developer tools and made the CSS we want.</p>
+<p>The membership type though it s not required since it s a byte it's implicit required.</p>
+
+<h3>Data annotations</h3>
+<ol>
+<li>[Required]</li>
+<li>[StringLength(255)]</li>
+<li>[Range(1,10)] for numbers</li>
+<li>[Compare("OtherProperry")] for comparing two properties for example passwords</li>
+<li>[Phone]</li>
+<li>[EmailAddress]</li>
+<li>[Url]</li>
+<li>[RegularExpression("...")]</li>
+
+</ol>
+
+<h2>Overriding error message</h2>
+<p>We can override error messages :</p>
+<pre><code class="language-javascript">        [Required(ErrorMessage = "Must not be empty")]
+        [StringLength(255)]
+        public string Name { get; set; }</code></pre>
+		
+<h2>Custom Validation</h2>
+<p>Let's suppose the customer who fills the form must be over 18 years</p>
+<p>First we create class out our Model which will derive from ValidationAttribute which is defined in System.ComponentModel.DataAnnotations</p>
+<p>Then we override the IsValid method.</p>
+<pre><code class="language-javascript">    public class Min18YearsIfMember :ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            return base.IsValid(value, validationContext);
+        }
+    }</code></pre>
+	
+<p>At our Model we add the property : </p>
+<pre><code class="language-javascript">        [Min18YearsIfMember]
+        public DateTime? Birthdate { get; set; }</code></pre>
+		
+<p>Then at our Model in the class we created and in the IsValid method. The ObjectInstance property gives us access in the containing class and we must cast it with the object we want.</p>	
+<pre><code class="language-javascript">        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            var customer = (Customer)validationContext.ObjectInstance;
+
+            if (customer.MembershipTypeId ==1)
+                return ValidationResult.Success;
+            if (customer.Birthdate == null)
+                return new ValidationResult("Birthdate is required");
+
+            var age = DateTime.Today.Year - customer.Birthdate.Value.Year;
+
+            return (age >= 18 ? ValidationResult.Success : new ValidationResult("Customer should be at least 18 years old"));
+
+        }</code></pre>	
+	
+<p>Finally our our View form we need to add validation message.</p>
+
+<h2>Validation summary</h2>
+<p>ASP.NET MVC gives us the ability to have the total summary of errors in our form.</p>
+<pre><code class="language-javascript">@Html.ValidationSummary()</code></pre>
+<p>Be careful for extra messages that we will get like Ids etc since they must not be empty. We fix this by instanciating
+the object with the fields so it will get 0 value instead of empty.
+</p>
+<pre><code class="language-javascript">        public ActionResult NewCustomer()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = new Customer(),
+                MembershipTypes = membershipTypes
+            };
+
+            return View("CustomerForm",viewModel);
+        }</code></pre>
+<p>We can pass arguments so it display a custom error and exclude all other errors.</p>
+<pre><code class="language-javascript">    @Html.ValidationSummary(true,"Please fix the following errors")</code></pre>
+
+<h2>Cient-Side Validation</h2>
+<p>Client-side validation is by default disabled in APS.NET MVC. To enable it go to BundleConfig.cs and see that we have it at our bundles but we don't have it in our shared View file. To have it where we want we must add it in our Customer form view for example.</p>
+
+<pre><code class="language-javascript">@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+</code></pre>
+
+<p>ASP.NET MVC now has validation errors in client side the messages we had. No extra call to server as we can see in our developer tools and Network activity. This happens because we used data annotations before so ASP.NET MVC handles everything.
+<strong>Client-side validation only works with data annotations. The custom validation we had for age won't work in client side
+ so we will use server side for that.</strong>
+</p>
+
+<h2>Prevent Cross-Site Request Forgery</h2>
+<p>We can see in the form data in our Network in developer tools the security hole.</p>
+</p><img class="small-image" src="images/security_hole.jpg">
+<p>To prevent this firtt we must make sure that this request comes only from the customer form.</p>
+<ol>
+<li>First we use at our form
+<pre><code class="language-javascript">    @Html.AntiForgeryToken()</code></pre>
+<p>We can see we have a hidden field created that's for verification which this value is also stored as a cookie in users computer
+in encrypted format. If the cookie matches the value then its a legitimate request otherwise it's considered as an attack.
+.</p>
+</p><img class="small-image" src="images/antiforgery-token.jpg">
+</li>
+
+<li>Second we surround our action that has the HttpPost with the validation AntiForgeryToken.
+<pre><code class="language-javascript">        [HttpPost]
+        [ValidateAntiForgeryToken]</code></pre>
+<p>All validation security will be handled by ASP.NET MVC then.</p>		
+</li>
+</ol>
+
+ <h2>Fixing showing empty values in form</h2>
+ <p>If we have a form and we have fields pre filled beacause we are creating an ew object</p>
+ <pre><code class="language-javascript">        public ActionResult NewMovie()
+        {
+            var genres = _context.Genres.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = new Movie(),
+                Genres = genres
+            };
+
+            return View("MovieForm",viewModel);
+        }</code></pre>
+</p><img class="small-image" src="images/filled-fields.jpg">
+<p>To fix this we get all properties from our Model and place it an our ViewModel and make nullable. This is called pure view model.</p>
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using Vidly.Models;
+
+namespace Vidly.ViewModels
+{
+    public class MovieFormViewModel
+    {
+        public IEnumerable&lt;Genre&gt; Genres { get; set; }
+        public int? Id { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Release Date field is required.")]
+        public DateTime? ReleaseDate { get; set; }
+
+
+        [Required]
+        [Range(1, 10)]
+        public byte? Stock { get; set; }
+
+
+        [Display(Name = "Genre")]
+        [Required(ErrorMessage = "Genre field is required.")]
+        public int? GenreId { get; set; }
+
+
+        public string Title {
+           get {
+                return Id != 0 ? "Edit Movie" : "New Movie";
+           }
+
+        }
+    }
+}</code></pre>
+<p>Then we must apply those fields to our controller also.</p>
+<pre><code class="language-javascript">        public ActionResult Edit(int id)
+        {
+            var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+
+            var viewModel = new MovieFormViewModel
+            {
+                Id = movie.Id,
+                Name = movie.Name,
+                ReleaseDate = movie.ReleaseDate,
+                Stock = movie.Stock,
+                GenreId = movie.GenreId,
+                Genres = _context.Genres.ToList()
+
+            };
+            if (movie == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View("MovieForm",viewModel);
+        }</code></pre>
+		
+<p>To clean the above though we can place them in a constructor.
+</p>
+<pre><code class="language-javascript">        public MovieFormViewModel(Movie movie)
+        {
+            Id = movie.Id;
+            Name = movie.Name;
+            ReleaseDate = movie.ReleaseDate;
+            Stock = movie.Stock;
+            GenreId = movie.GenreId;
+        }</code></pre>
+		<p>And in the new MovieFormViewModel we pass a movie.</p>
+		<pre><code class="language-javascript">        public ActionResult Edit(int id)
+        {
+            var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+
+            var viewModel = new MovieFormViewModel(movie)
+            {
+             
+                Genres = _context.Genres.ToList()
+
+            };
+            if (movie == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View("MovieForm",viewModel);
+        }</code></pre>
+</section>
+
+<section>
+<h1>Restful(representational state transfer) services with ASP.NET Web API</h1>
+<p>When we have a request MVC framework hands off that request to an action at the controller. This action most of the time returns a View which is then parsed by the Razor view engine and then eventually HTML markup is returned to the client. So with this approachH HTML markup is generated in the server and then returned to the client.</p>
+<p>We can return raw data to to the client directly. This has some benefits :</p>
+<ol>
+<li>Less server resources(improves scalability)</li>
+<li>Less bandwidth(improve performance)</li>
+<li>Support for broad range of clients(multiple endpoints)</li>
+</ol>
+<p>We call these endpoints Data Services or Web APIs(Application Programming Interface). Other web apps can consume these 
+services and add some functionality. Some good examples are youtube, facebook, twitter, google maps etc which we can use their APIs for our sites/apps. In ASP.NET MVC we have ASP.NET Web API.
+</p>
+
+<p>In REST services we have those requests:</p>
+<ol>
+<li>GET(to get a resource)</li>
+<li>POST(create a resource)</li>
+<li>PUT(update resource)</li>
+<li>DELETE(delete a resource)</li>
+</ol>
+
+<h2>Building an API</h2>
+<p>To create an API from scratch first we create the folder we want in our Controllers folder. For example Api. In it we create a 
+controller and choose Web API 2 Controller - Empty.
+</p>
+<p>At first time we will get a text guide that guides us how to configure a Web API which is very easy if you follow it. </p>
+<p>We notice that our controller derives from class ApiController. Here is our API :</p>
+
+<pre><code class="language-javascript">    public class CustomersController : ApiController
+    {
+
+        private ApplicationDbContext _context;
+
+        //data from database 
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        //GET /api/customers /api/customers
+        public IEnumerable&lt;Customer&gt;GetCustomers()
+        {
+            return _context.Customers.ToList();
+        }
+
+        //single customer /api/customers
+        public Customer GetCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            return customer;
+        }
+
+
+        //create customer /api/customers
+        [HttpPost]
+        public Customer CreateCustomer(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            return customer;
+        }
+
+        //update customer api/customers/1
+        [HttpPut]
+        public void UpdateCustomer(int id, Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            customerInDb.Name = customer.Name;
+            customerInDb.Birthdate = customer.Birthdate;
+            customerInDb.IsSubcribed = customer.IsSubcribed;
+            customerInDb.MembershipTypeId = customer.MembershipTypeId;
+
+            _context.SaveChanges();
+        }
+
+
+        //delete customer api/customers/1
+        [HttpDelete]
+        public void DeleteCustomer(int id)
+        {
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            _context.Customers.Remove(customerInDb);
+            _context.SaveChanges();
+        }</code></pre>
+		
+<h3>Testing our API</h3>
+<p>We can see with the above code in our app if we give the path we get the result in xml.</p>
+
+</p><img class="small-image" src="images/xml_from_api.jpg">
+<p>We can use postman to test the data.</p>
+
+<h3>Making the API stable</h3>
+<p>Maybe we need to change a property or something this will have an impact in our API. We must make a 
+contract that this API will depend on. To solve this we need a DTO(data transfer object).
+</p>
+
+<p>First our API should never receive domain objects directly like the Customer customer we have.
+Also by using domain objects we are opening security holes.
+</p>
+<p>We add a new folder in our project called Dtos. Then a new class that will have the name and then Dto for example
+CustomerDto.</p>
+<p>Then we copy all our properties from the model to the Dto class.</p>
+
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using Vidly.Models;
+
+namespace Vidly.Dtos
+{
+    public class CustomerDto
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Name field must not be empty")]
+        [StringLength(255)]
+        public string Name { get; set; }
+
+        public bool IsSubcribed { get; set; }
+
+        public byte MembershipTypeId { get; set; }
+
+        [Min18YearsIfMember]
+        public DateTime? Birthdate { get; set; }
+
+    }
+}</code></pre>
+
+<p>Finally we should map to Dto and our Dto properties back to our customer object. We can;t do this manually and we will use AutoMapper.</p>
+
+<h3>AutoMapper</h3>
+<p>In our package manager console :</p>
+<pre><code class="language-javascript">install-package automapper</code></pre>
+<p>Then we create a mapping profile which determines how objects of different types can be mapped to each other.</p>
+<p>In App Start we add new class MappingProfile for example and will ook like this :</p>
+
+<pre><code class="language-javascript">using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Vidly.Models;
+using Vidly.Dtos;
+
+namespace Vidly.App_Start
+{
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            //Mapping configuration between two types source and target
+            Mapper.CreateMap<Customer, CustomerDto>();
+            Mapper.CreateMap<CustomerDto, Customer>();
+        }
+    }
+}</code></pre>
+
+<p>We need to have the mapping when the application starts in Global.asax.cs.</p>
+
+<pre><code class="language-javascript">using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
+using System.Web.Http;
+using Vidly.App_Start;
+
+namespace Vidly
+{
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            Mapper.Initialize(c => c.AddProfile<MappingProfile>();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+    }
+}</code></pre>
+
+<p>So now our API will look like this :</p>
+
+<pre><code class="language-javascript">using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Vidly.Dtos;
+using Vidly.Models;
+
+namespace Vidly.Controllers.Api
+{
+    public class CustomersController : ApiController
+    {
+
+        private ApplicationDbContext _context;
+
+        //data from database 
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        //GET /api/customers /api/customers
+        public IEnumerable&lt;CustomerDto>GetCustomers()
+        {
+            return _context.Customers.ToList().Select(Mapper.Map<Customer,CustomerDto>);
+        }
+
+        //single customer /api/customers
+        public CustomerDto GetCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            return Mapper.Map<Customer,CustomerDto>(customer);
+        }
+
+
+        //create customer /api/customers
+        [HttpPost]
+        public CustomerDto CreateCustomer(CustomerDto customerDto)
+        {
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+
+            var customer = Mapper.Map<CustomerDto, Customer>(customerDto);
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            customerDto.Id = customer.Id;
+
+            return customerDto;
+        }
+
+        //update customer api/customers/1
+        [HttpPut]
+        public void UpdateCustomer(int id, CustomerDto customerDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            Mapper.Map<CustomerDto, Customer>(customerDto, customerInDb);
+
+            _context.SaveChanges();
+        }
+
+
+        //delete customer api/customers/1
+        [HttpDelete]
+        public void DeleteCustomer(int id)
+        {
+            //Get customer from database
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            //Check if oject exists in db
+            if (customerInDb == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            _context.Customers.Remove(customerInDb);
+            _context.SaveChanges();
+        }
+
+    }
+}</code></pre>
+
+<h3>Using camelcase in our API</h3>
+<p>Our API has a config file as our project. So in App_Start -> WebApiConfig  </p>
+<pre><code class="language-javascript">using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+
+namespace Vidly
+{
+    public static class WebApiConfig
+    {
+        public static void Register(HttpConfiguration config)
+        {
+            //Changing case to camelCase
+            var settings = config.Formatters.JsonFormatter.SerializerSettings;
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            settings.Formatting = Formatting.Indented;
+
+            config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+        }
+    }
+}</code></pre>
+
+<h3>IHttp ActionResult</h3>
+<p>When we create RESTful APIs the status code of the request should be 201 and not 200. By using IHttpActionResult 
+we can have some helper methods like BadRequest(). Also we have use the Created method so we return a new Uri and the object created.
+</p>
+<p>So the code would look :</p>
+
+<pre><code class="language-javascript">
+        //single customer /api/customers
+        public IHttpActionResult GetCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+            return Ok(Mapper.Map<Customer,CustomerDto>(customer));
+        }
+
+
+        //create customer /api/customers
+        [HttpPost]
+        public IHttpActionResult CreateCustomer(CustomerDto customerDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var customer = Mapper.Map<CustomerDto, Customer>(customerDto);
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+
+            customerDto.Id = customer.Id;
+
+            //
+            return Created(new Uri(Request.RequestUri + "/" + customer.Id), customerDto);
+        }
+
+
+
+</code></pre>
+
+</section>
+
+
+<section>
+<h1>Client-side</h1>
+<p>We have created a Delete button in our view for customers in our table that with ajax call will Delete current customer.</p>
+<pre><code class="language-javascript">
+            &lt;tbody&gt;
+                @foreach (var customer in Model)
+                {
+                    &lt;tr&gt;
+                        &lt;td&gt;@Html.ActionLink(customer.Name,"Edit","Customers",new { id = customer.Id },null)&lt;/td&gt;
+                        &lt;td&gt;@customer.MembershipType.Membership&gt;/td&gt;
+                        &lt;td&gt;
+                            &lt;button data-customer-id="@customer.Id" class="btn-link js-delete">Delete&lt;/button&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                }
+
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+
+        @section scripts
+        { 
+        &lt;script&gt;
+            $(document).ready(function () {
+                $("#customers .js-delete").on("click", function () {
+
+                    var button = $(this);
+
+                    if (confirm("Are you sure want to delete this customer?"))
+                    {
+                        $.ajax({
+                            url: "/api/customers/" + button.attr("data-customer-id"),
+                            method: "DELETE",
+                            success: function () {
+                                button.parents("tr").remove();
+                            }
+                        })
+                    }        
+                });
+            });
+            &lt;/script&gt;
+
+</code></pre>
+<h2>Bootbox.js</h2>
+<p>Bootbox is a javascript library that makes bootstrap modals easy to use.
+To add bootbox in an asp.net mvc project we will install its package in our package manager console.
+</p>
+
+<pre><code class="language-javascript">PM> install-package bootbox -version:4.3.0</code></pre>
+<p>We will see we have bootbox.js and bootbox.min.js to our scripts. Now we will have to add it to our bundle.</p>
+
+<pre><code class="language-javascript">            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                      "~/Scripts/bootstrap.js",
+                      "~/scripts/bootbox.js",
+                      "~/Scripts/respond.js"));</code></pre>
+
+<p><strong>With ASP.NET MVC when we add something to our BundleCofig.cs they are minified automatically!</strong> </p>
+
+<p>And now with bootbox we have in our script :</p>
+<pre><code class="language-javascript">
+        &lt;script>
+            $(document).ready(function () {
+                $("#customers .js-delete").on("click", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    button.parents("tr").remove();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script>
+
+
+
+</code></pre>
+<h3>Bootbox.js in action</h3>
+</p><img class="small-image" src="images/bootbox_js.jpg">
+
+<h3>Improving our jquery code</h3>
+<p>We can improve the click handler by adding a filter since if we have a lot customers we were going to have 
+a separate handler function in the memory.
+ </p>
+ <pre><code class="language-javascript">        &lt;script>
+            $(document).ready(function () {
+                $("#customers").on("click",".js-delete", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    button.parents("tr").remove();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script></code></pre>
+			
+<h2>DataTables jQuery Plugin</h2>
+<p>DataTables is a jQuery plugin that gives us pagination out of the box. At our pckage manager console :</p>
+<pre><code class="language-javascript">PM>install-package jquery.datatables -version:1.10.11</code></pre>
+<p>We will have a folder called DataTables. We are going only to need two scripts. So we add them to our bundle config and the css :</p>
+
+<pre><code class="language-javascript">            bundles.Add(new ScriptBundle("~/bundles/lib").Include(
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/bootstrap.js",
+                        "~/scripts/bootbox.js",
+                        "~/Scripts/respond.js",
+                        "~/Scripts/DataTables/jquery.datatables.js",
+                        "~/Scripts/DataTables/datatables.bootstrap.js"
+                        ));</code></pre>
+
+						
+<pre><code class="language-javascript">            bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/bootstrap-lumen.css",
+                      "~/Content/Datatables/css/datatables.bootstrap.css",
+                      "~/Content/site.css"));</code></pre>
+					  
+<p>In our script we just add the id of the table :</p>
+<pre><code class="language-javascript">$("#customers").DataTable();</code></pre>
+<p><strong>Be careful to have correct tags in table else you will get an uncaught javascript error.</strong>
+<p>Though if we have many data its better to get raw data with json give it to the tables and generate html mark on the client.
+Json objects are more lightweight than html markup.
+</p>
+<h3>Datatables with AJAX source</h3>
+<p>If we have a lot of pages with data we can use AJAX to show only the data we want. If our API responded 
+we would have an array of objects and we would set dataSrc:"customers"
+ </p>
+ <pre><code class="language-javascript">count : 10,
+	  customers:[
+	  {...},
+	  {...}
+	  ...
+	  ]
+ </code></pre>
+<p>But since now we are bringing already an array of objects we set dateSrc to an empty string. Next we need to specify 
+our columns. For each column we supply an object. For example data property tells where to get data for this column. But if we 
+it isn't plain text and for example we want a link we will use render as function with some parameters.  Since we are returning columns with data we can remove the data from tbody in our table.
+</p>
+<p>Also we can write some jquery to have a message if we don't have anything returned from our API.</p>
+<pre><code class="language-javascript">
+        &lt;script>
+            $(document).ready(function () {
+
+                $("#customers").DataTable({
+                    ajax: {
+                        url: "/api/customers",
+                        dataSrc:""
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            render: function (data,type,customer) {
+                                return "&lt;a href='/customer/edit/" + customer.id + "'>" + customer.name + "&lt;/a>";
+                            }
+                        },
+                        {
+                            data:"name"
+                        },
+                        {
+                            data: "id",
+                            render: function (data) {
+                                return "&lt;button class='btn-link js-delete' data-customer-id=" + data + ">Delete&lt;/button>";
+                            }
+                        }
+                    ]
+                });
+
+                $("#customers").on("click",".js-delete", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    button.parents("tr").remove();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script>
+
+</code></pre>
+
+<p>Since dataTable stores the results in its own tables we should remove it also from them. Check the table.row line</p>
+
+<pre><code class="language-javascript">        &lt;script>
+            $(document).ready(function () {
+
+                var table = $("#customers").DataTable({
+                    ajax: {
+                        url: "/api/customers",
+                        dataSrc:""
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            render: function (data,type,customer) {
+                                return "&lt;a href='/customer/edit/" + customer.id + "'>" + customer.name + "&lt;/a>";
+                            }
+                        },
+                        {
+                            data:"membershipType.membership"
+                        },
+                        {
+                            data: "id",
+                            render: function (data) {
+                                return "&lt;button class='btn-link js-delete' data-customer-id=" + data + ">Delete&lt;/button>";
+                            }
+                        }
+                    ]
+                });
+
+                $("#customers").on("click",".js-delete", function () {
+
+                    var button = $(this);
+
+                    bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            })
+                        }
+                    });
+   
+                });
+            });
+            &lt;/script></code></pre>
+			
+<a href="http://datatables.net"><h3>Datatables API</h3> </a>			
+
+<p><i>If you have thousands of records with big fat tables properties we need to enable dataTables on the server side.</i>
+</section>
+
+<section>
+
+<h1>Authentication</h1>
+
+<h2>Authentication Options</h2>
+
+<p>When we create a new ASP.NET project at the begin we see </p>
+</p><img class="small-image" src="images/authentication_new_project.jpg">
+<p>We have 4 different authentication options :</p>
+</p><img class="small-image" src="images/authentication_options.jpg">
+
+<br>
+
+<ol>
+
+<li><h3>No authentication</h3><p>Used for applications that don't use any authentication services.</p></li>
+<li><h3>Individual User Accounts</h3><p>It's the default option for ASP.NET MVC projects(used for web sites). Also we can use
+social logins like facebook, Google, Twitter etc.
+</p>
+</li>
+<li><h3>Organizational Accounts</h3> <p>Useful if you want to enable single sign in for internal and cloud Apps using Active Directory.</p></li>
+<li><h3>Windows Authentication</h3><p>Used for intranet applications.</p></li>
+</ol>
+
+<p>Individual User Accounts is the most commmon. Every ASP.NET MVC application HAS BY DEFAULT Register and Sign in options. We can find them in our navbar.</p>
+
+<h2>ASP.NET Identity</h2>
+<p>This is a framework inside our app that uses three assemblies :</p>
+</p><img class="small-image" src="images/asp.net.identity.jpg">
+<p>It has domain classes and provides them through its API like :</p>
+<ol>
+
+<li>UserManager</li>
+<li>RoleMnager</li>
+<li>SignInMnager</li>
+
+</ol>
+
+<p>These classes talk to UserStore and RoleStore. When we created our app we had some tables created for us like ASP.NetUsers etc with some properties. We can see in our Models folder IdentityModels.cs. We can see that they derive from classes which are part
+of ASP.NET Identity.
+</p>
+
+</p><img class="small-image" src="images/IdentityModel.cs.jpg">
+
+<br>
+
+<p>In our Controllers folder we can see AccountController which is responsible for Register, Sign In, etc.</p>
+<p>We have a Register Action which brings the View which is the form for registering. Also we can see the Register action that
+creates the user by post request. We have options like auto sign in when registering sending emails etc.
+</p>
+
+<h2>Restricting Access</h2>
+<p>In ASP.NET MVC we have an attribute called Authorize. It acts like a filter. A filter in ASP.NET MVC will check if the current user is logged in or not. If not it will redirect the user to login page. We will have a query string that will show where the user will be redirected if logged in.</p>
+<p>If we apply this attribute in the controller the filter will be applied to all actions in the controller. The attribute 
+is the below code :</p>
+
+
+<pre><code class="language-javascript">Authorize</code></pre>
+<p>Also we can apply this attribute globally so everything will be protected. If we need to apply it globally we will add it in 
+App_Start in FilterConfig which registers global filters.</p>
+
+<pre><code class="language-javascript">using System.Web;
+using System.Web.Mvc;
+
+namespace Vidly
+{
+    public class FilterConfig
+    {
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new HandleErrorAttribute());
+            filters.Add(new AuthorizeAttribute());
+        }
+    }
+}</code></pre>
+
+<p>If we wanted to allow access to anonymous user to a page we use the AllowAnonymous</p>
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Vidly.Controllers
+{
+    [AllowAnonymous]
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }</code></pre>
+
+<h2>Restricting access to specific roles</h2>	
+		
+<p>To create roles we go to our register action in AccountController.</p>		
+<pre><code class="language-javascript">        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                    var roleManager = new RoleManager<IdentityRole>(roleStore);
+                    await roleManager.CreateAsync(new IdentityRole("CanManageMovie"));</code></pre>
+	
+<p>Then we need to assign a new user to this role by pasing the id and name of the role. So when the user registers it will have those roles.</p>
+
+<pre><code class="language-javascript">await UserManager.AddToRoleAsync(user.Id ,"CanManageMovies");</code></pre>
+
+<p>So we run the application and the user that will be registered will be assigned to this role.
+<strong>Don't forget to remove these lines.</strong>
+</p>
+
+<p>After that we will create a migration that we will seed users. To easily do that open the table check the users that 
+have registered right click script and we will get the insert queries. Same for our roles.
+</p>
+	</p><img class="small-image" src="images/asp.net.user.roles.jpg">
+	
+<p>Finally we need to associate our storemanager user with the new role. </p>
+
+</p><img class="small-image" src="images/assign_user_to_role.jpg">
+
+<p>So in our SeedUsers migration we will have </p>
+<pre><code class="language-javascript">namespace Vidly.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class SeedUsers : DbMigration
+    {
+        public override void Up()
+        {
+            Sql(@"
+INSERT INTO [dbo].[AspNetUsers] ([Id], [Email], [EmailConfirmed], [PasswordHash], [SecurityStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEndDateUtc], [LockoutEnabled], [AccessFailedCount], [UserName]) VALUES (N'2ac14dd7-a957-4543-8f0b-b2c2405175d6', N'guest@vidly.com', 0, N'AEFRxemvAmBAak3vZN49b9rMkJ0TZobNEdh+LrMPWAOmITCUHki9BDSgYVKEufeItQ==', N'3ba7f22f-a566-4903-ab4f-13f372a06f2e', NULL, 0, 0, NULL, 1, 0, N'guest@vidly.com')
+INSERT INTO [dbo].[AspNetUsers] ([Id], [Email], [EmailConfirmed], [PasswordHash], [SecurityStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEndDateUtc], [LockoutEnabled], [AccessFailedCount], [UserName]) VALUES (N'a14dafcf-9e41-436f-bf29-27b7517905ab', N'storemanager@vidly.com', 0, N'ADMyvV97WPqu5yO5ZYkxfK4oLbJuPP/TYFwyH33UKwUR+a5LLHS8QeSgXDmIzws2GA==', N'9bbb1695-8353-42df-a940-91fe2e1934ee', NULL, 0, 0, NULL, 1, 0, N'storemanager@vidly.com')
+
+INSERT INTO [dbo].[AspNetRoles] ([Id], [Name]) VALUES (N'196c07ca-1033-4ce5-bfd9-686e6eb271aa', N'CanManageMovies')
+INSERT INTO [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'a14dafcf-9e41-436f-bf29-27b7517905ab', N'196c07ca-1033-4ce5-bfd9-686e6eb271aa')
+
+");
+
+        }
+        
+        public override void Down()
+        {
+        }
+    }
+}</code></pre>
+
+<p>We will remove these records from database and run the migration.</p>
+<pre><code class="language-javascript">update-database</code></pre>
+<p>Microsoft and other solutions suggest different approach but this is the correct one.</p>
+
+<h2>Show pages only to signed in users and specific roles </h2>
+<p>If we have simple view we can use if else statements to show what we want but this will end up with a lot ifs and else.</p>
+<p>The best solution is to create entirely new views for each role.</p>
+<p>Then we will return the view we want according to user rights in our controller :</p>
+
+
+<h2>User.IsInRole()</h2>
+<pre><code class="language-javascript">        public ActionResult Index()
+        {
+            if (User.IsInRole("CanManageMovies"))
+                return View("List");
+
+            else
+                return View("ReadOnlyList");
+
+
+        }</code></pre>
+
+<p>We need though to fix security holes so we prevent direct access for user that is doesn't have correct role.</p>
+<p>We must Authorize Roles in controller and in our API also.</p>
+<pre><code class="language-javascript">        [Authorize(Roles = "CanManageMovies")]
+        public ActionResult NewMovie()
+        {
+            var genres = _context.Genres.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Genres = genres
+            };
+
+            return View("MovieForm",viewModel);
+        }</code></pre>
+		
+<p>To prevent these magic string create a static class and constants for the roles.</p>
+<pre><code class="language-javascript">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Vidly.Models
+{
+    public static class RoleName
+    {
+        public const string CanManageMovies = "CanManageMovies";
+    }
+}</code></pre>
+
+<h2>Adding Data to Register Form</h2>
+<p>We can change the form in ASP.NET MVC. First we always start with the domain. We go to our IdentityModels. Then we add the property we want.
+
+ </p>
+ <pre><code class="language-javascript">    public class ApplicationUser : IdentityUser
+    {
+
+        public string DrivingLicense;</code></pre>
+
+<p>Since we made a change to our domain we must add-migration.</p>
+<p>Now we need to make our changes to our view Account-> Register.</p>
+<pre><code class="language-javascript">&lt;div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        &lt;div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        &lt;/div>
+    &lt;/div></code></pre>
+
+	
+	<p>After we added the the field we want then in AccountViewModel:</p>
+<pre><code class="language-javascript">    public class RegisterViewModel
+    {
+        [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
+</code></pre>
+<p>Final step when we post the form we need to put this driving license to our domain object. We go to our Controllers
+and find the Register() Action
+</p>
+<pre><code class="language-javascript">        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    DrivingLicense = model.DrivingLicense
+
+                }; </code></pre>
+
+				
+<h2>OAth enable Social Logins</h2>
+<p>OAth is an authentication protocol which stands for open authorization.</p>
+<p>First we need to register our application to create some kind of partnership.</p>
+<p>The app will give us an API key and a secret like a password. To prevent malicious user we use https so
+the data between these parties will be encrypted. The user will assign the app to access information.</p>
+<p>Facebook or whatever knows the address of our app it will redirect back to our app and we will have an authorization token.
+This authorization token tells our app that facebook or whatever could authenticate this user.
+
+</p>
+<p>ASP.NET MVC uses asp.net.identity as we saw and it's very easy to use social logins.</p>
+
+<h3>To use Social Logins you must:</h3>
+<ol>
+<li>Enable SSL
+<p>To enable ssl select the project properties window by pressing F4 in solution explorer.</p>
+<img class="small-image" src="images/enable_ssl.jpg"> 
+<p>Then copy the SSL url and go to properties.</p>
+<img class="small-image" src="images/project_properties.jpg">
+<p>Then we replace the project url with the address we copied.</p>
+<img class="small-image" src="images/project_url.jpg">
+<p>Then we proceed to all our steps to have a dummy certificate. Live server will need a real certificate.</p>
+<h3>Don't allow access to http</h3>
+<p>Go to FilterConfig and we will add another filter.</p>
+<pre><code class="language-javascript">    public class FilterConfig
+    {
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new HandleErrorAttribute());
+            filters.Add(new AuthorizeAttribute());
+            filters.Add(new RequireHttpsAttribute());
+        }
+    }</code></pre>
+	
+	<a href="https://docs.microsoft.com/en-us/aspnet/mvc/overview/security/create-an-aspnet-mvc-5-app-with-facebook-and-google-oauth2-and-openid-sign-on">Register Facebok,etc with OAth</a><br>
+	<a href="https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-2.1&tabs=aspnetcore2x">Google external login setup in ASP.NET </a>
+</li>
+<li>Register our app with Facebook,gmail,etc
+<p>Finally after we had followed the instructions in link at Startup.Auth we uncomment what external app
+we will use for sign in pass the keys and the new sign in option will appear in log in page which we can change the View as we want.
+</p>
+<p>Also <strong>If we get an error EntityValidationErrors  </strong> it's because the ExternalLoginConfirmation.cshtml in our View must be the same as Register.cshtml in View and in AccountViewModel. </p>
+<img class="small-image" src="images/register_with_external_account_error.jpg">
+<br>
+<pre><code class="language-javascript">    public class ExternalLoginConfirmationViewModel
+    {
+        [Required]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
+    }</code></pre>
+<p>Of course we need to add it in our controller.</p>
+<pre><code class="language-javascript">        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Manage");
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Get the information about the user from the external login provider
+                var info = await AuthenticationManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    return View("ExternalLoginFailure");
+                }
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    DrivingLicense = model.DrivingLicense
+                };</code></pre>
+				<p>In our SQL server except from user we will see in AspNetUserLogins </p>
+				<img class="small-image" src="images/asp.net_user_logins.jpg">
+</li>
+</ol>	
+
+			
+				
+				
+				
+				
+</section>
+
+
+
+
+<section>
+<h1>Performance optimization</h1>
+<blockquote>"Premature optimization is the root of all evils."<br> <small>Donald Nkuth - Computer scientist and professor at Stanford University</small></blockquote>
+
+<p>Don't sacrifice maintanability of your code for performance optimization. Optimize only when you need to.</p>
+<p>We  can't have all performance problems caused since they can be any. In web apps most follow the three-tier architecture.</p>
+
+<h2>Three-tier architecture</h2>
+<ol>
+<li><h3>Data - SQL Server(where database and queries reside)</h3></li>
+<li><h3>Application - IIS(where the application is hosted)</h3>
+<ol>
+<li>Output caching</li>
+<li>Data caching</li>
+<li>Release Builds</li>
+<li>Disabling Session</li>
+</ol>
+</li>
+<li><h3>Client - Browser(front end of the application running in the browser)</h3></li>
+
+
+</ol>
+
+<!--Data tier-->
+<section>
+<h1>Data Tier</h1>
+<p>Most performance bottlenecks are in the data tier. So if we optimize that tier we will improve the general performance and see the difference..</p>
+
+<h3>General rules by Mosh Hamedani(a high level developer)</h3>
+
+<ol>
+<li><strong>Do not sacrifice  maintanability of your code to premature optimization</strong></li>
+<li><strong>Be realistic and think like an "engineer" not a computer</strong></li>
+<li><strong>Be pragmatic and ensure your efforts have observable results and give value</strong></li>
+</ol>
+
+
+<h3>Schema Issues</h3>
+<ol>
+<li>Primary keys</li>
+<li>Relationships</li>
+<li>Indexes</li>
+</ol>
+
+<p>When we use Entity framework code first migrations they get automatically primary key and indexes. </p>
+
+<p>Also there is an implementation pattern called EAV Entity-Attribute-Value. Instead of having concrete tables like
+movies, customers, etc the database has only a few tables called entities, attributes and values. This approach make you write huge queries. This also means performance problems.</p>
+
+<h3>Queries issues<h3>
+<p>Queries must be simple and optimized. If a query is too complex we should write a stored procedure.</p>
+
+<h4>Use execution Plan in SQL Server</h4>
+<p>SQL server has a procedure that you can check what queries are more heavier and have heavier load.</p>
+
+<h4>Create a "read" database</h4>
+<p>Since we read data than changing them in database we can have a different database that we read data from it.</p>
+</section>
+<!--End Data tier-->
+
+
+<!--Application Tier-->
+<section>
+<h1>Application Tier</h1>
+<h2>Output Caching</h2>
+<p>Caching is one technique that can improve speed of end user's experience.</p>
+
+<p>To enable caching in a page we use [OutputCache] like we we use [Authorize(Duration = 50)]. Duration is in seconds.</p>
+
+<pre><code class="language-javascript">        [OutputCache(Duration = 50)]
+        public ActionResult Index()
+        {
+            return View();
+        }</code></pre>
+<p>We can cache it on the client or on the server. If the view is specific to a user on the client else on the server.</p>
+<h2>Caching location</h2>
+<pre><code class="language-javascript">        [OutputCache(Duration = 50,Location = System.Web.UI.OutputCacheLocation.Server )]
+        public ActionResult Index()
+        {
+            return View();
+        }</code></pre>
+		
+<p>Also if the action takes one or more parameters and the output changes based on the values of 
+these parameters we can cache its parameter. For example if the View changes according to a parameter called genre:</p>
+
+<pre><code class="language-javascript">        [OutputCache(Duration = 50,Location = OutputCacheLocation.Server,VaryByParam ="genre" )]
+        public ActionResult Index()
+        {
+            return View();
+        }</code></pre>		
+		
+<p>For any parameters we use asterisk before</p>
+
+<p><strong>Do not assume a page will be heavy and start using caching everywhere. Always think user experience first and what 
+they will see.
+</strong></p>
+
+<h2>Disabling caching</h2>
+<p>Sometimes caching can be bad and users don't see the updates or changes as supposed to so we must to disable it.</p>		
+<pre><code class="language-javascript">        [OutputCache(Duration = 0,VaryByParam = = "*",NoStore =true)]
+        public ActionResult Index()
+        {
+            return View();
+        }
+</code></pre>
+
+
+<h2>Data caching</h2>
+<p>Sometimes we want to cache a Data and not Html. <strong>Again use it only if you have something that doesn't changes often and ONLY if you have serious performance issues.</strong></p>
+
+<p>To use it we need to add reference to the assembly and then add the namespace.</p>
+
+<img class="small-image" src="images/adding_system.runtime.caching.jpg" >
+
+<p>Every item we store in cache we use key to access it. If is null retrieve it from database else from cache.</p>
+
+
+<pre><code class="language-javascript">        public ActionResult Index()
+        {
+            if (MemoryCache.Default["Genres"]== null)
+            {
+                MemoryCache.Default["Genres"] = _context.Genres.ToList();
+            }
+            var genres = MemoryCache.Default["Genres"] as IEnumerable&lt;Genre%gt;
+
+            return View();
+        }</code></pre>
+
+		
+<h2>Async</h2>
+<p>Also we shouldn't use it so much since a lot of people think that will increase performance of an application.</p>
+<p>When we want something from the database the user sends a request a thread runs then the query. Every web server 
+has limited memory and threads it can handle. If we run out of memory and threads we must use async and await.
+So this is used so we can serve more users if we see we run out of memory and threads.
+</p>
+<img class="small-image" src="images/threads.jpg">
+<p>This improves scalability and not performance but still limited to hardware. It will make a difference if used with SQL cLUSTER,NOSQL , SQL Azure</p>	
+		
+		
+<h2>Release builds</h2>
+<p>We have different builds and the Debug build has some extra assemblies for debuging etc. The release build is lighter.</p>
+
+<img class="small-image" src="images/release_builds.jpg">	
+	
+
+
+<h2>Disabling Session</h2>
+<p>Session is something we should really avoid. A ssession is a piece of memory in the web server allocated to each user.
+The more users we have the more memory we will use. Session kills scalability of our application. Sessions aren't used in web development these days.
+</p>
+
+<p>To have scalability an application must be  Stateless. A request comes then is processed and we are done. </p>
+
+<p>To disable sessions we open app Web</p>
+<img class="small-image" src="images/disable_sessions.jpg">
+</section>
+<!--End application tier-->
+
+
+<!-- Client browser -->
+<section>
+<h1>Client - Browser Tier</h1>
+
+<ol>
+<li>Reduce number of requests</li>
+<li>Optimization - optimize images with compression, minify scripts and styles, create APIs with DTOs(only the data you need)</li>
+<li>Combine javascript and stylesheets into one(when we put our scripts or css into a bundle that's what's happening). We should set debug to false.
+<br> 
+<img class="small-image" src="images/combining_and_minification.jpg">
+
+<p>In our Web.config file we have two files in it Web.Debug.config and Web.Release.config. The Web.release will override the settings in the parent.</p>
+</li>
+<li>Put scripts before closing the body tag</li>
+</ol>
+
+<p><strong>Don't forget about caching if you see strange results or no results(in chrome tools disable cache).</strong></p>
+
+</section>
+
+
+</section><!--End tiers-->
+
+
+
+
+
+<!--Glimpse-->
+<section>
+<h1>Glimpse a tool for Performance profiling</h1>
+<p>This is a tool that we can run diagnostics tests and have performance profiling. To install it in our package manager console :</p>
+<pre><code class="language-javascript">PM> install-package glimpse.mvc5</code></pre>
+<p>Then:</p>
+<pre><code class="language-javascript">PM> install-package glimpse.ef6</code></pre>
+<p>At our localhost we type glimpse.axd at the end to enable but this only can be seen locally for security reasons.
+In glimpse documentation  we can see how to make it work in a production application.
+</p>
+
+<p>Here how it looks and we can see some info by hovering:</p>
+
+<img class="small-image" src="images/glimspe.jpg">
+
+<p>By clicking the g button we can see SQL queries, AJAX requests etc.</p>
+
+<p>If we use lazy loading instead of eager we will see in glimpse that the queries will be increased. So this comes to N + 1 issue because of lazy loading.</p>
+<strong>Avoid lazy loading at all times in web apps.</strong>
+
+<p>So with glimpse we can see queries run by entity framework and many other diagnostics.</p>
+</section>
+<!--End Glimpse-->
+
+
+
+<!--Building End to end feature-->
+<section>
+<h1>Building an End-to-end feature</h1>
+<p>By end to end we mean from one point to the other. For example the admin or shopmanager has a form that 
+will fill so he knows what the customer rent and track the rentals.
+</p>
+
+<h2>Steps for building correct software</h2>
+<ol>
+<li><h3>Understand what problem you need to solve</h3>
+<p>Ask customer or client about details and this use case</p>
+</li>
+
+<li><h3>We need Front-end - Back-end</h3>
+<p>It doesn't matter what you build first. It's personal choice.</p>
+</li>
+
+<li><h3>Input - Output</h3>
+<ul>
+<li>Use case: New rental</li>
+<li>Input: Customer and Movies</li>
+<li>Output: in this example we don't have an output but for example in an eshop we might gave the order or transaction Id to customer</li>
+</ul>
+
+</li>
+
+<li><h3>Focus on the big picture</h3>
+<p>Focus on the big picture the general idea and then in details.</p>
+</li>
+
+<li><h3>Represent a simple graphic for the application(UML)</h3>
+<p>UML stands for Unified Model Language that is a very simple graphic explanation of our application so anyones understands.</p>
+</li>
+
+<li><h3>How is going to work</h3>
+<p>In our case we need an Action that our front end is going to call later on. 
+This action can be in the MVC controller or an API controller. If we want to return markup add it to MVC Controller. 
+If we want to return data then go for an API controller(by using the API  we can get the data and use them wherever we want).  
+</p>
+<p>In our case when the form will be submitted we will inform the user that the rental was added.</p>
+</li>
+
+
+</ol>
+
+<h3>Association class</h3>
+<p>This is a class we use that will be the intermediate for connecting different classes. For example in our rental app
+we need Rental class that will have the CustomerId the MovieId DateRented,DateReturned and of course Id for the rental.
+</p>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+ <script src="assets/jquery-3.3.1.min.js"></script>
+ <script src="assets/prism.js"> </script>
+<script>$( document ).ready(function() {
+	
+	$('.small-image').click(function() {
+	    $(this).find('img').fadeTo(0, 1);
+        if($(this).hasClass('enlarged')){
+            $(this).removeClass('enlarged');
+            
+            $(this).stop().animate({width: '50%', height: '50%'}, 200,
+                                   function(){
+                                       $(this).parent().removeClass('ontop');
+                                   }); //so it gets put on bottom AFTER the shrink animation is finished
+        }else{
+            $(this).addClass('enlarged')
+            $(this).parent().addClass('ontop');
+            $(this).stop().animate({width: '100%', height: '100%'}, 200 );
+        }
+    });
+	
+
+
+	
+});</script>
+
+
+
+
+</body>
+</html>

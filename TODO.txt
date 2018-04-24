@@ -26,6 +26,3 @@ Same for IdentityModels
 
 TODO 
 Show customers in bar only to storemanagers
-
-24-Apr-2018
-Create an API for New Rental use case
