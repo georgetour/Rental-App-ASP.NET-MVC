@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -9,9 +10,11 @@ namespace Vidly.Models
     {
         public int Id { get; set; }
 
-        public Customer customer { get; set; }
+        [Required]
+        public Customer Customer { get; set; }
 
-        public Movie movie { get; set; }
+        [Required]
+        public Movie Movie { get; set; }
 
         //What date the movie was rent
         public DateTime DateRent { get; set; }

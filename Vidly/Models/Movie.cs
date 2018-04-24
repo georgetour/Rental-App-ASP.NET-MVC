@@ -29,5 +29,7 @@ namespace Vidly.Models
         [Required(ErrorMessage = "Genre field is required.")]
         public int GenreId { get; set; }
 
+        public byte NumberAvailable { get; set; }
+
     }
 }

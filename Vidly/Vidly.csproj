@@ -311,6 +311,22 @@
     <Compile Include="Migrations\201804241522183_AddRentalTableToDomainModel.Designer.cs">
       <DependentUpon>201804241522183_AddRentalTableToDomainModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804241524255_AddRequiredFieldsToRental.cs" />
+    <Compile Include="Migrations\201804241524255_AddRequiredFieldsToRental.Designer.cs">
+      <DependentUpon>201804241524255_AddRequiredFieldsToRental.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804241611459_ChangedColumnNamesForRental.cs" />
+    <Compile Include="Migrations\201804241611459_ChangedColumnNamesForRental.Designer.cs">
+      <DependentUpon>201804241611459_ChangedColumnNamesForRental.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804241631525_AddNumberAvailableToMovies.cs" />
+    <Compile Include="Migrations\201804241631525_AddNumberAvailableToMovies.Designer.cs">
+      <DependentUpon>201804241631525_AddNumberAvailableToMovies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804241637318_MakeNumberAvailableEqualtToStock.cs" />
+    <Compile Include="Migrations\201804241637318_MakeNumberAvailableEqualtToStock.Designer.cs">
+      <DependentUpon>201804241637318_MakeNumberAvailableEqualtToStock.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AccountViewModels\ExternalLoginConfirmationViewModel.cs" />
@@ -639,6 +655,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804241522183_AddRentalTableToDomainModel.resx">
       <DependentUpon>201804241522183_AddRentalTableToDomainModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804241524255_AddRequiredFieldsToRental.resx">
+      <DependentUpon>201804241524255_AddRequiredFieldsToRental.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804241611459_ChangedColumnNamesForRental.resx">
+      <DependentUpon>201804241611459_ChangedColumnNamesForRental.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804241631525_AddNumberAvailableToMovies.resx">
+      <DependentUpon>201804241631525_AddNumberAvailableToMovies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804241637318_MakeNumberAvailableEqualtToStock.resx">
+      <DependentUpon>201804241637318_MakeNumberAvailableEqualtToStock.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
