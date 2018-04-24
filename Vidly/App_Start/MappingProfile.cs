@@ -18,11 +18,13 @@ namespace Vidly.App_Start
             Mapper.CreateMap<Movie, MovieDto>();
             Mapper.CreateMap<MembershipType, MembershipTypeDto>();
             Mapper.CreateMap<Genre, GenreDto>();
+            Mapper.CreateMap<Rental, RentalDto>();
 
 
             //Dto to Domain
             Mapper.CreateMap<CustomerDto, Customer>().ForMember(m => m.Id, opt => opt.Ignore()); //Fix since Id shouldn't be changed because is a key property
-            Mapper.CreateMap<MovieDto, Movie>().ForMember(m => m.Id, opt => opt.Ignore()); ;
+            Mapper.CreateMap<MovieDto, Movie>().ForMember(m => m.Id, opt => opt.Ignore());
+            Mapper.CreateMap<RentalDto, Rental>();
         }
     }
 }

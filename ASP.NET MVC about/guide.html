@@ -144,7 +144,7 @@ some code for us. Then we create an empty one. By default we have an Index actio
  <p>We have to say to this newlly created controller that we will use the models.
 </p><img class="small-image" src="images/using_models_in_controller.jpg">
  </p>
- <p>As we see it returns the View which we should create in our folder Movies that will be called Random.
+ <p>Then it created a folder same name with our controller and we must add the View. As we see it returns the View which we should create in our folder Movies that will be called Random.
  </p><img class="small-image" src="images/add_view.jpg">
  </p>
  <p>There we can use a template and choose as a <strong>partial view</strong> which is like a widget which can be used on different views.
@@ -2575,6 +2575,10 @@ If we want to return data then go for an API controller(by using the API  we can
 
 </ol>
 
+<h3>Association class</h3>
+<p>This is a class we use that will be the intermediate for connecting different classes. For example in our rental app
+we need Rental class that will have the CustomerId the MovieId DateRented,DateReturned and of course Id for the rental.
+</p>
 
 </section>
 
