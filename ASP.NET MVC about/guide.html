@@ -150,10 +150,15 @@ some code for us. Then we create an empty one. By default we have an Index actio
  <p>There we can use a template and choose as a <strong>partial view</strong> which is like a widget which can be used on different views.
  </p><img class="small-image" src="images/partial_view.jpg">
  </p>
-<p>Also we have to select the layout since we want all our pages look similar in our app. By default our mvc project has a layout to choose.
-</p><img class="small-image" src="images/layout_template.jpg">
+ 
+<p>Also we have to select the layout since we want all our pages look similar in our app. We can leave empty the layout since it is 
+registered</p>
+<img class="small-image" src="images/viewstart.jpg">
+<p>By default our mvc project has a layout to choose.</p>
 
-</p>
+<img class="small-image" src="images/layout_template.jpg">
+
+
 
 <h2>.cshtml(the view we created)</h2>
 <ol>
@@ -2583,6 +2588,125 @@ we need Rental class that will have the CustomerId the MovieId DateRented,DateRe
 </section>
 
 
+<!--Different way of building forms in ASP.NET with AJAX-->
+<section>
+<h1>Different way of building forms in ASP.NET with AJAX</h1>
+<p>After we create our controller and the view for it we will use raw html for our form and call it with AJAX:</p>
+
+<h3>Zencoding</h3>
+<p>I need a div with a class form-group that will have a label, input type of text with the class form control. <strong>Download web essentials</strong> and when you type the below code after you press tab it will auto create the tags.</p>
+<pre class="language-javascript"><code>
+&lt;form method="post">
+    div.form-group>label+input[type="text"].form-control
+&lt;/form>
+</code></pre>
+
+<p>Create html code:</p>
+<pre class="language-javascript"><code>
+    &lt;div class="form-group">
+        &lt;label> &lt;/label>
+        &lt;input type="text" value="" class="form-control" />
+    &lt;/div>    
+</code></pre>
+
+<p>Also we will see a web essential bar in our page that we can see where in the code is something:</p>
+<img class="small-image" src="images/web-essentials.jpg">
+
+<p>To find a file in Visual Studio hit CTRL + ,</p>
+
+<h2>The form in raw html with zencoding</h2>
+<pre class="language-javascript"><code>
+&lt;form method="post">
+    &lt;div class="form-group">
+        &lt;label>Customer &lt;/label>
+        &lt;input type="text" value="" class="form-control" />
+    &lt;/div>    
+
+    &lt;div class="form-group">
+        &lt;label> Movie&lt;/label>
+        &lt;input type="text" value="" class="form-control" />
+    &lt;/div>
+
+    &lt;button class="btn btn-primary">Submit&lt;/button>
+&lt;/form>   
+</code></pre>
+
+<h2>typeahead.js</h2>
+<p>This is a library that autocompletes when we type. We install it our package manager console by :</p>
+<pre><code>PM> install-package Twitter.Typeahead</code></pre>
+
+<p>Next in our bundle config:</p>
+<pre class="language-javascript"><code>            bundles.Add(new ScriptBundle("~/bundles/lib").Include(
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/bootstrap.js",
+                        "~/scripts/bootbox.js",
+                        "~/Scripts/respond.js",
+                        "~/Scripts/DataTables/jquery.dataTables.js",
+                        "~/Scripts/DataTables/dataTables.bootstrap.js",
+                        "~/Scripts/typeahead.bundle.js"
+                        ));</code></pre>
+						
+<p>Then find at examples in google the css and copy what you want and add it to a seperate file and then at your bundle.</p>
+
+<a href="https://twitter.github.io/typeahead.js/examples/">https://twitter.github.io/typeahead.js/examples/</a>
+
+<p>Copy the javascript so it gets activated and put it in your form page since its small.</p>
+<pre class="language-javascript"><code>var bestPictures = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  prefetch: '../data/films/post_1960.json',
+  remote: {
+    url: '../data/films/queries/%QUERY.json',
+    wildcard: '%QUERY'
+  }
+});
+
+$('#remote .typeahead').typeahead(null, {
+  name: 'best-pictures',
+  display: 'value',
+  source: bestPictures
+});</code></pre>
+
+<p>Bloodhound object is all the logic engine behind the autocomplete.</p>
+<p>datumTokenizer looks at value property and use whitespace to tokenize it. We need to change the value in the one
+that will bring. In our case name.
+</p>
+<p>queryTokenizer transofrms the query in to a bunch of tokens.</p>
+<p>prefetch is useful for providing data upon initialization.</p>
+<p>Then at url we provide what will be typed that it will be places in runtime at "%QUERY".So we can filter our customers
+and bring those who match the query.
+</p>
+<p>Next we have the reference to our textbox.</p>
+<p>In place of null we can pass an object an configure the behavior of typeahead. So our code will look as below:</p>
+
+
+<pre class="language-javascript"><code>    <script>
+        $(document).ready(function () {
+
+            var customers = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/customers?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#customer').typeahead({
+                minLength: 3, //type at least three characters
+                highlight: true //change characters to bold for result
+
+            },
+            {
+                name: 'customers',
+                display: 'name', //what proerties we should display in suggestion list
+                source: customers //our bloodhound object
+            }).on("typeahead:select");
+        })
+    </script></code></pre>
+
+</section>
+<!--End Different way of building forms in ASP.NET with AJAX-->
 
 
 

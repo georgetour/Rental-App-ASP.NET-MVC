@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "New Rental Form";
+    
+}
+
+<h2>New Rental Form</h2>
+
+
+<form method="post">
+    <div class="form-group">
+        <label>Customer </label>
+        <input id="customer" type="text" value="" class="form-control" />
+    </div>    
+
+    <div class="form-group">
+        <label> Movie</label>
+        <input type="text" value="" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary">Submit</button>
+</form>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            var vm = {};
+
+
+            var customers = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/customers?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#customer').typeahead({
+                minLength: 3, //type at least three characters
+                highlight: true //change characters to bold for result
+
+            },
+            {
+                name: 'customers',
+                display: 'name', //what proerties we should display in suggestion list
+                source: customers //our bloodhound object
+            }).on("typeahead:select", function (e,customer) {
+                vm.customerId = customer.id;
+                console.log(vm.customerId);
+            });
+            
+        })
+    </script>
+    
+    
+}
+

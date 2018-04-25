@@ -22,14 +22,22 @@ namespace Vidly.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
-        //GET /api/customers /api/customers
+        //GET /api/customers 
         [Authorize(Roles = RoleName.CanManageMovies)]
-        public IEnumerable<CustomerDto>GetCustomers()
+        public IHttpActionResult GetCustomerss(string query = null)
         {
-            return _context.Customers
-                .Include(c => c.MembershipType)
+            //Query them so have them with typeahead
+            var customersQuery = _context.Customers
+               .Include(c => c.MembershipType);
+
+            if (!String.IsNullOrWhiteSpace(query))
+                customersQuery = customersQuery.Where(c => c.Name.Contains(query));
+
+            var customerDtos = customersQuery
                 .ToList()
-                .Select(Mapper.Map<Customer,CustomerDto>);
+                .Select(Mapper.Map<Customer, CustomerDto>);
+
+            return Ok(customerDtos);
         }
 
         //single customer /api/customers

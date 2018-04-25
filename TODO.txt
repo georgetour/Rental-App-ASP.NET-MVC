@@ -25,4 +25,7 @@ Take all classes from AccountVieModel and make them seperate ok
 Same for IdentityModels
 
 TODO 
-Show customers in bar only to storemanagers
+Show customers in bar only to storemanagers ok
+
+25-4-2018
+Add typehead to movie in rental form
