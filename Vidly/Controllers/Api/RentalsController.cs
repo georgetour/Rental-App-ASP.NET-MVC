@@ -20,19 +20,19 @@ namespace Vidly.Controllers.Api
 
 
         [HttpPost]
-        public IHttpActionResult CreateRental(RentalDto rentalDto)
+        public IHttpActionResult CreateNewRentals(RentalDto rentals)
         {
 
 
             //Get customer from the context(if we had to use it externally we would use SingleOrDefault)
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == rentalDto.CustomerId);
+            var customer = _context.Customers.Single(c => c.Id == rentals.CustomerId);
 
 
             //This is the same with SQL 
             //SELECT *
             //FROM Movies
             //WHERE Id IN (1,2,3)
-            var movies = _context.Movies.Where(m => rentalDto.MoviesIds.Contains(m.Id)).ToList() ;
+            var movies = _context.Movies.Where(m => rentals.MovieIds.Contains(m.Id)).ToList() ;
 
 
             //Create a rental objectfor each movie
@@ -52,6 +52,7 @@ namespace Vidly.Controllers.Api
                    Customer = customer,
                    Movie = movie,
                    DateRent = DateTime.Now
+                   
 
                 };
 

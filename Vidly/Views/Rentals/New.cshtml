@@ -1,4 +1,5 @@
-﻿
+﻿@model dynamic
+
 @{
     ViewBag.Title = "New Rental Form";
     
@@ -7,15 +8,23 @@
 <h2>New Rental Form</h2>
 
 
-<form method="post">
+<form  id="newRental">
     <div class="form-group">
         <label>Customer </label>
-        <input id="customer" type="text" value="" class="form-control" />
+        <div class="tt-container">
+            <input id="customer" required data-rule-validCustomer="true" type="text" value="" class="form-control" />
+        </div>
     </div>    
 
     <div class="form-group">
         <label> Movie</label>
-        <input id="movie" type="text" value="" class="form-control" />
+        <div class="tt-container">
+            <input id="movie" type="text" value="" class="form-control" />
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">  <ul id="movies" class="list-group"></ul></div>
+        </div>
     </div>
 
     <button class="btn btn-primary">Submit</button>
@@ -23,10 +32,14 @@
 
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval")
     <script>
         $(document).ready(function () {
 
-            var vm = {};
+            var vm = {
+
+                movieIds: [] //Store temporarily the movies and then we will add them to server
+            };
 
 
             var customers = new Bloodhound({
@@ -47,7 +60,7 @@
                 name: 'customers',
                 display: 'name', //what proerties we should display in suggestion list
                 source: customers //our bloodhound object
-            }).on("typeahead:select", function (e,customer) {
+            }).on("typeahead:select", function (e, customer) {
                 vm.customerId = customer.id;
                 console.log(vm.customerId);
             });
@@ -71,12 +84,44 @@
                 display: 'name', //what proerties we should display in suggestion list
                 source: movies //our bloodhound object
             }).on("typeahead:select", function (e, movie) {
-                vm.movieId = movie.id
+                $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");//Add multiple movies to a list
+
+                $("#movie").typeahead("val", "");//clear the text box when we have selected the movie
+                vm.movieIds.push(movie.id);//Ad movie id to our vm
+                vm.movieId = movie.id;
                 console.log(vm.movieId);
             });
 
-            
-        })
+            //Custom validation
+            $.validator.addMethod("validCustomer", function () {
+
+                return vm.customerId && vm.customerId !== 0;
+            },"Please select a valid customer");
+
+            //check for validation and sumbit the form
+            $("#newRental").validate({
+                submitHandler: function () {
+                    e.preventDefault();
+
+                    $.ajax({
+
+                        url: "/api/Rentals",
+                        method: "post",
+                        data: vm
+                    })
+                    .done(function () {
+                        toastr.success("Rentals succesfully recorded");
+
+                    })
+                    .fail(function () {
+                        toastr.error("A problem occured");
+                    })
+                }
+
+
+            });
+
+        });//End document ready
     </script>
     
     

@@ -25,7 +25,8 @@ namespace Vidly.Controllers.Api
         public IHttpActionResult GetMovies(string query=null)
         {
             var moviesQuery = _context.Movies
-                .Include(m => m.Genre);
+                .Include(m => m.Genre)
+            .Where(m => m.NumberAvailable > 0);//Check only if we have available
 
             if (!String.IsNullOrWhiteSpace(query))
                 moviesQuery = moviesQuery.Where(c => c.Name.Contains(query));

@@ -1184,7 +1184,12 @@ the object with the fields so it will get 0 value instead of empty.
 <pre><code class="language-javascript">    @Html.ValidationSummary(true,"Please fix the following errors")</code></pre>
 
 <h2>Cient-Side Validation</h2>
-<p>Client-side validation is by default disabled in APS.NET MVC. To enable it go to BundleConfig.cs and see that we have it at our bundles but we don't have it in our shared View file. To have it where we want we must add it in our Customer form view for example.</p>
+<p>Client-side validation is by default disabled in APS.NET MVC. To enable it go to BundleConfig.cs and see that we have it at our bundles but we don't have it in our shared View file. </p>
+<pre><code class="language-javascript">            
+	bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include("~/Scripts/jquery.validate*"));
+</code></pre>
+
+<p>To have it where we want we must add it in our Customer form view for example.</p>
 
 <pre><code class="language-javascript">@section scripts
 {
@@ -1196,6 +1201,58 @@ the object with the fields so it will get 0 value instead of empty.
 <strong>Client-side validation only works with data annotations. The custom validation we had for age won't work in client side
  so we will use server side for that.</strong>
 </p>
+
+<p>Also if we use html validation jquery validator understands this:</p>
+<pre><code class="language-javascript">    &lt;div class="form-group">
+        &lt;label>Customer &lt;/label>
+        &lt;div class="tt-container">
+            &lt;input id="customer" required type="text" value="" class="form-control" />
+        &lt;/div>
+    &lt;/div>    
+</code></pre>
+
+<p>Then we call the validate method where we want to use it :</p>
+<pre><code class="language-javascript">            
+		$("#newRental").validate();   
+</code></pre>
+
+<p>Don't forget we have to validate the form before submitting it.</p>
+<pre><code class="language-javascript">            
+		    //check for validation and sumbit the form
+            $("#newRental").validate({
+                submitHandler: function () {
+                    e.preventDefault();
+
+                    $.ajax({
+
+                        url: "/api/Rentals",
+                        method: "post",
+                        data: vm
+                    })
+                    .done(function () {
+                        toastr.success("Rentals succesfully recorded");
+
+                    })
+                    .fail(function () {
+                        toastr.error("A problem occured");
+                    })
+                }
+
+
+            });  
+</code></pre>
+
+<h3>Custom jQuery validator</h3>
+<p>We can make our own validator so they must type the correct:</p>
+<pre><code class="language-javascript">            
+		    //Custom validation
+            $.validator.addMethod("validCustomer", function () {
+
+                return vm.customeId && vm.customerId !== 0;
+            },"Please select a valid customer"); 
+</code></pre>
+
+<p>And finally we must apply a data-rule-validCustomer="true" to the input in our form.</p>
 
 <h2>Prevent Cross-Site Request Forgery</h2>
 <p>We can see in the form data in our Network in developer tools the security hole.</p>
@@ -2599,6 +2656,7 @@ we need Rental class that will have the CustomerId the MovieId DateRented,DateRe
 &lt;form method="post">
     div.form-group>label+input[type="text"].form-control
 &lt;/form>
+ul#movies.list-group
 </code></pre>
 
 <p>Create html code:</p>
@@ -2607,6 +2665,8 @@ we need Rental class that will have the CustomerId the MovieId DateRented,DateRe
         &lt;label> &lt;/label>
         &lt;input type="text" value="" class="form-control" />
     &lt;/div>    
+	
+	&lt;ul id="movies" class="list-group"><&lt;/ul>
 </code></pre>
 
 <p>Also we will see a web essential bar in our page that we can see where in the code is something:</p>
@@ -2680,7 +2740,7 @@ and bring those who match the query.
 <p>In place of null we can pass an object an configure the behavior of typeahead. So our code will look as below:</p>
 
 
-<pre class="language-javascript"><code>    <script>
+<pre class="language-javascript"><code>    &lt;script>
         $(document).ready(function () {
 
             var customers = new Bloodhound({
@@ -2703,7 +2763,93 @@ and bring those who match the query.
                 source: customers //our bloodhound object
             }).on("typeahead:select");
         })
-    </script></code></pre>
+    &lt;/script></code></pre>
+	
+	<h3>Multiple selection with typehead</h3>
+	<p>We can add multiple objects in our typehead textbox by clicking them and choosing them and pushing them in an array.</p>
+	
+	<pre class="language-javascript"><code>    &lt;script>
+        $(document).ready(function () {
+
+            var movies = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/movies?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#movie').typeahead({
+                minLength: 3, //type at least three characters
+                highlight: true //change characters to bold for result
+
+            },
+            {
+                name: 'movies',
+                display: 'name', //what proerties we should display in suggestion list
+                source: movies //our bloodhound object
+            }).on("typeahead:select", function (e, movie) {
+                $("#movies").append("<li>" + movie.name + "</li>");//Add multiple movies to a list
+
+                $("#movie").typehead("val", "");//clear the text box when we have selected the movie
+                vm.movieIds.push(movie.id);//Ad movie id to our vm
+
+            });
+        });
+    &lt;/script></code></pre>
+	<p>So the result will look like this :</p>
+	
+	<img class="small-image "src="images/multiple_objects_typehead.jpg">
+	
+	<p>Finally our ajax submiting event</p>
+	
+		<pre class="language-javascript"><code>             
+			//Submit the form
+            $("#newRental").submit(function(e){
+                e.preventDefault();
+
+                $.ajax({
+
+                    url: "/api/Rentals",
+                    method: "post",
+                    data:vm
+                })
+                .done(function(){
+                    console.log("form works");
+                })
+                .fail(function () {
+
+                })</code></pre>
+				
+<h2>Toaster</h2>	
+<p>This is a library that makes nice toasting messages.First we need to install it in our package manager console:</p>	
+<pre><code>PM> install-package toastr</code></pre>
+
+<p>Again we should add it to our bundle.</p>
+<p>Then we refer to it in our javascript:</p>
+
+		<pre class="language-javascript"><code>             
+			            //Submit the form
+            $("#newRental").submit(function(e){
+                e.preventDefault();
+
+                $.ajax({
+
+                    url: "/api/Rentals",
+                    method: "post",
+                    data:vm
+                })
+                .done(function(){
+                    toastr.success("Rentals succesfully recorded");
+                   
+                })
+                .fail(function () {
+					toastr.error("A problem occured");
+                })
+
+            });</code></pre>
+		
 
 </section>
 <!--End Different way of building forms in ASP.NET with AJAX-->
