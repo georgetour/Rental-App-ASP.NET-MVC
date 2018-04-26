@@ -12,14 +12,14 @@
     <div class="form-group">
         <label>Customer </label>
         <div class="tt-container">
-            <input id="customer" required data-rule-validCustomer="true" type="text" value="" class="form-control" />
+            <input id="customer" required name="customer" data-rule-validCustomer="true" type="text" value="" class="form-control" />
         </div>
     </div>    
 
     <div class="form-group">
         <label> Movie</label>
         <div class="tt-container">
-            <input id="movie" type="text" value="" class="form-control" />
+            <input id="movie" data-rule-atLeastOneMovie="true" name="movie" type="text" value="" class="form-control" />
         </div>
 
         <div class="row">
@@ -96,11 +96,16 @@
             $.validator.addMethod("validCustomer", function () {
 
                 return vm.customerId && vm.customerId !== 0;
-            },"Please select a valid customer");
+            }, "Please select a valid customer");
+
+            $.validator.addMethod("atLeastOneMovie", function () {
+
+                return vm.movieIds.length > 0;
+            },"Please add at least one movie");
 
             //check for validation and sumbit the form
-            $("#newRental").validate({
-                submitHandler: function () {
+            var validator= $("#newRental").validate({
+                submitHandler: function (e) {
                     e.preventDefault();
 
                     $.ajax({
@@ -112,12 +117,20 @@
                     .done(function () {
                         toastr.success("Rentals succesfully recorded");
 
+                        //Clear fields when form submitted succesfully
+                        $("#customer").typeahead("val", "");
+                        $("#movie").typeahead("val", "");
+                        $("#movies").empty();
+
+                        vm = { movieIds: [] };
+
+                        validator.resetForm();
                     })
                     .fail(function () {
                         toastr.error("A problem occured");
                     })
+                    return false;
                 }
-
 
             });
 

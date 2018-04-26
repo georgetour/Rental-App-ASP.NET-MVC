@@ -1218,9 +1218,9 @@ the object with the fields so it will get 0 value instead of empty.
 
 <p>Don't forget we have to validate the form before submitting it.</p>
 <pre><code class="language-javascript">            
-		    //check for validation and sumbit the form
+            //check for validation and sumbit the form
             $("#newRental").validate({
-                submitHandler: function () {
+                submitHandler: function (e) {
                     e.preventDefault();
 
                     $.ajax({
@@ -1236,10 +1236,10 @@ the object with the fields so it will get 0 value instead of empty.
                     .fail(function () {
                         toastr.error("A problem occured");
                     })
+                    return false;
                 }
 
-
-            });  
+            });
 </code></pre>
 
 <h3>Custom jQuery validator</h3>
@@ -1253,6 +1253,8 @@ the object with the fields so it will get 0 value instead of empty.
 </code></pre>
 
 <p>And finally we must apply a data-rule-validCustomer="true" to the input in our form.</p>
+
+<p><strong>jQuery validator plugin relies on name attributes so DON'T leave them empty.<strong></p>
 
 <h2>Prevent Cross-Site Request Forgery</h2>
 <p>We can see in the form data in our Network in developer tools the security hole.</p>
@@ -2850,6 +2852,21 @@ and bring those who match the query.
 
             });</code></pre>
 		
+		<p>Finally we must clear the fields if form submitted, clear our viewModel and reset our validator:</p>
+		<pre class="language-javascript"><code>
+		                .done(function () {
+                        toastr.success("Rentals succesfully recorded");
+
+                        //Clear fields when form submitted succesfully
+                        $("#customer").typeahead("val", "");
+                        $("#movie").typeahead("val", "");
+                        $("#movies").empty();
+						
+						vm = {movieIds:[]};
+						
+						validator.resetForm();
+                    })
+		</code></pre>
 
 </section>
 <!--End Different way of building forms in ASP.NET with AJAX-->
