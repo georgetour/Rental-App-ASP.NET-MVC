@@ -24,7 +24,7 @@ namespace Vidly.Controllers.Api
 
         //GET /api/customers 
         [Authorize(Roles = RoleName.CanManageMovies)]
-        public IHttpActionResult GetCustomerss(string query = null)
+        public IHttpActionResult GetCustomers(string query = null)
         {
             //Query them so have them with typeahead
             var customersQuery = _context.Customers

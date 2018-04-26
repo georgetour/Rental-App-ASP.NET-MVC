@@ -15,7 +15,7 @@
 
     <div class="form-group">
         <label> Movie</label>
-        <input type="text" value="" class="form-control" />
+        <input id="movie" type="text" value="" class="form-control" />
     </div>
 
     <button class="btn btn-primary">Submit</button>
@@ -51,6 +51,30 @@
                 vm.customerId = customer.id;
                 console.log(vm.customerId);
             });
+
+            var movies = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/movies?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#movie').typeahead({
+                minLength: 3, //type at least three characters
+                highlight: true //change characters to bold for result
+
+            },
+            {
+                name: 'movies',
+                display: 'name', //what proerties we should display in suggestion list
+                source: movies //our bloodhound object
+            }).on("typeahead:select", function (e, movie) {
+                vm.movieId = movie.id
+                console.log(vm.movieId);
+            });
+
             
         })
     </script>

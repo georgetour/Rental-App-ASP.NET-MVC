@@ -29,3 +29,6 @@ Show customers in bar only to storemanagers ok
 
 25-4-2018
 Add typehead to movie in rental form
+
+26-4-2018
+Add typehead to movie in rental form ok
